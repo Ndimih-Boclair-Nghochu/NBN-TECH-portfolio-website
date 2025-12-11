@@ -3,40 +3,184 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>NBN TECH TEAM — Admin</title>
+  <title>NBN TECH TEAM — Admin Login</title>
   <link rel="stylesheet" href="/style.css">
+  <style>
+    body.login-page {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 20px;
+    }
+
+    .login-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(20, 30, 50, 0.12);
+      width: 100%;
+      max-width: 420px;
+      padding: 40px;
+      animation: slideUpFade 0.8s ease-out;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 12px 0;
+      letter-spacing: -0.5px;
+    }
+
+    .login-header p {
+      font-size: 14px;
+      color: var(--text-light);
+      margin: 0;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .form-group input {
+      padding: 12px 14px;
+      border: 1px solid #e0e6ed;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      background: white;
+      color: var(--text);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #4a7ba7;
+      box-shadow: 0 0 0 3px rgba(74, 123, 167, 0.1);
+    }
+
+    .form-group input::placeholder {
+      color: #a0aec0;
+    }
+
+    .submit-btn {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #4a7ba7 0%, #2a5a7a 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 8px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(74, 123, 167, 0.3);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .login-msg {
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      text-align: center;
+      min-height: 20px;
+      margin-top: 8px;
+    }
+
+    .login-msg.error {
+      background: #fee;
+      color: #c33;
+      border: 1px solid #fcc;
+    }
+
+    .login-msg.success {
+      background: #efe;
+      color: #363;
+      border: 1px solid #cfc;
+    }
+
+    @media (max-width: 640px) {
+      .login-container {
+        padding: 28px 20px;
+      }
+
+      .login-header h1 {
+        font-size: 24px;
+      }
+
+      .submit-btn {
+        padding: 11px 20px;
+        font-size: 13px;
+      }
+    }
+  </style>
 </head>
-<body>
-  <div class="admin-wrap">
+<body class="login-page">
+  <div class="login-container">
+    <div class="login-header">
+      <h1>NBN TECH Admin</h1>
+      <p>Sign in to access the dashboard</p>
+    </div>
+
+    <form id="login-form" class="login-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="admin@nbntechportfolio.com" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="submit-btn">Sign In</button>
+    </form>
+    <div id="login-msg" class="login-msg"></div>
+  </div>
+
+  <div class="admin-wrap" id="dashboard" hidden>
     <header>
       <h1>NBN TECH TEAM Admin</h1>
       <div id="admin-user" class="admin-user">
         <!-- populated after login -->
       </div>
+      <button id="logout-btn" class="logout-btn">Logout</button>
     </header>
 
     <main>
-      <section id="login-section">
-        <h2>Admin Login</h2>
-        <form id="login-form">
-          <label>Email<input id="email" type="email" required></label>
-          <label>Password<input id="password" type="password" required></label>
-          <button type="submit" class="btn">Login</button>
-        </form>
-        <div id="login-msg"></div>
-      </section>
-
-      <section id="dashboard" hidden>
-        <nav class="admin-nav" role="tablist" aria-label="Admin sections">
-            <button data-section="projects" class="admin-tab">Projects</button>
-            <button data-section="blogs" class="admin-tab">Blogs</button>
-            <button data-section="services" class="admin-tab">Services</button>
-            <button data-section="skills" class="admin-tab">Skills</button>
-            <button data-section="team" class="admin-tab">Team</button>
-            <button data-section="reviews" class="admin-tab">Reviews</button>
-          </nav>
-            <button data-section="reviews" class="admin-tab">Reviews</button>
-          </nav>
+      <nav class="admin-nav" role="tablist" aria-label="Admin sections">
+        <button data-section="projects" class="admin-tab active">Projects</button>
+        <button data-section="blogs" class="admin-tab">Blogs</button>
+        <button data-section="services" class="admin-tab">Services</button>
+        <button data-section="skills" class="admin-tab">Skills</button>
+        <button data-section="team" class="admin-tab">Team</button>
+        <button data-section="reviews" class="admin-tab">Reviews</button>
+      </nav>
 
           <div class="admin-section" id="section-projects">
             <h3>Projects</h3>
@@ -113,8 +257,8 @@
             <p>Manage public reviews submitted by visitors.</p>
             <div id="reviews-list"></div>
           </div>
-        </section>
-    </main>
+        </main>
+  </div>
 
   <script src="/admin/app.js"></script>
 </body>
