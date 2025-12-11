@@ -37,9 +37,9 @@ async function sync(){
   const tCount = await TeamMember.count();
   if(tCount===0){ 
     await TeamMember.bulkCreate([
-      { name:'Ndimih Boclair', role:'Founder & CEO', bio:'Founder of NBN TECH TEAM. Full-stack developer with 5+ years of experience building scalable web applications. Passionate about clean code and DevOps.', linkedin:'https://linkedin.com/in/ndimih-boclair', website:'https://ndimihboclair.com', photo: 'https://images.unsplash.com/photo-1545996124-1b0b9d6b0c3f?w=800&h=800&fit=crop' },
-      { name:'Sarah Johnson', role:'Lead Developer', bio:'Senior full-stack engineer specializing in React and Node.js. Expert in cloud architecture and performance optimization.', linkedin:'https://linkedin.com/in/sarah-johnson', website:'https://sarahjohnson.dev', photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=800&fit=crop' },
-      { name:'Michael Chen', role:'Product Designer', bio:'UX/UI designer with a focus on user-centered design. Experienced in creating intuitive interfaces for complex applications.', linkedin:'https://linkedin.com/in/michael-chen', website:'https://michaelchen.design', photo: 'https://images.unsplash.com/photo-1531123414780-f0b95d6d6f6d?w=800&h=800&fit=crop' }
+      { name:'Ndimih Boclair', role:'Founder & CEO', bio:'Founder of NBN TECH TEAM. Full-stack developer with 5+ years of experience building scalable web applications. Passionate about clean code and DevOps.', linkedin:'https://linkedin.com/in/ndimih-boclair', website:'https://ndimihboclair.com', github:'https://github.com/ndimih-boclair', photo: 'https://images.unsplash.com/photo-1545996124-1b0b9d6b0c3f?w=800&h=800&fit=crop' },
+      { name:'Sarah Johnson', role:'Lead Developer', bio:'Senior full-stack engineer specializing in React and Node.js. Expert in cloud architecture and performance optimization.', linkedin:'https://linkedin.com/in/sarah-johnson', website:'https://sarahjohnson.dev', github:'https://github.com/sarahjohnson', photo: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&h=800&fit=crop' },
+      { name:'Michael Chen', role:'Product Designer', bio:'UX/UI designer with a focus on user-centered design. Experienced in creating intuitive interfaces for complex applications.', linkedin:'https://linkedin.com/in/michael-chen', website:'https://michaelchen.design', github:'https://github.com/michaelchen', photo: 'https://images.unsplash.com/photo-1531123414780-f0b95d6d6f6d?w=800&h=800&fit=crop' }
     ]); 
   }
   const bCount = await Blog.count();
