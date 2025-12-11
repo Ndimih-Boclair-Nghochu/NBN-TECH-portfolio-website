@@ -57,12 +57,14 @@
       document.title = `${p.title} — NBN TECH`;
       
       container.innerHTML = `
-        <div class="post-body">
-          <div class="post-content">${p.content || p.excerpt || ''}</div>
-          <div class="post-footer">
-            <div class="post-actions">
-              <a href="blogs.html" class="btn">← Back to blogs</a>
-              ${p.externalLink ? `<a href="${p.externalLink}" class="btn outline" target="_blank" rel="noopener">Open source</a>` : `<a href="https://wa.me/?text=${encodeURIComponent(window.location.href + ' - ' + p.title)}" class="btn outline" target="_blank" rel="noopener">Share on WhatsApp</a>`}
+        <div class="post-card">
+          <div class="post-body">
+            <div class="post-content">${p.content || p.excerpt || ''}</div>
+            <div class="post-footer">
+              <div class="post-actions">
+                <a href="blogs.html" class="btn">← Back to blogs</a>
+                ${p.externalLink ? `<a href="${p.externalLink}" class="btn outline" target="_blank" rel="noopener">Open source</a>` : `<a href="https://wa.me/?text=${encodeURIComponent(window.location.href + ' - ' + p.title)}" class="btn outline" target="_blank" rel="noopener">Share on WhatsApp</a>`}
+              </div>
             </div>
           </div>
         </div>
