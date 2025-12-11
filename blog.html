@@ -64,6 +64,7 @@
               <div class="post-actions">
                 <a href="blogs.html" class="btn">← Back to blogs</a>
                 ${p.externalLink ? `<a href="${p.externalLink}" class="btn outline" target="_blank" rel="noopener">Open source</a>` : `<a href="https://wa.me/?text=${encodeURIComponent(window.location.href + ' - ' + p.title)}" class="btn outline" target="_blank" rel="noopener">Share on WhatsApp</a>`}
+                ${p.ctaLink ? `<a href="${p.ctaLink}" class="btn primary" target="_blank" rel="noopener">${p.ctaText || 'Get Access'}</a>` : ''}
               </div>
             </div>
           </div>
