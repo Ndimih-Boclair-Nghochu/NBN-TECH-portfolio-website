@@ -88,16 +88,21 @@ async function loadProjects(){
 }
 
 async function editProject(e){
-  const id = e.target.dataset.id;
+  const id = (e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id)
+    || (e && e.target && e.target.dataset && e.target.dataset.id)
+    || (e && e.target && e.target.closest && e.target.closest('button') && e.target.closest('button').dataset && e.target.closest('button').dataset.id);
+  if(!id) return;
   const projects = await api('/api/projects');
-  const p = projects.find(x=>x.id==id);
+  const p = projects.find(x=>String(x.id)===String(id));
   if(!p) return;
-  projectForm.querySelector('[name=id]').value = p.id;
-  projectForm.querySelector('[name=title]').value = p.title;
-  projectForm.querySelector('[name=slug]').value = p.slug;
-  projectForm.querySelector('[name=link]').value = p.link || '';
-  projectForm.querySelector('[name=github]').value = p.github || '';
-  projectForm.querySelector('[name=description]').value = p.description || '';
+  if(!projectForm) return;
+  const setIf = (selector, value) => { const el = projectForm.querySelector(selector); if(el) el.value = value; };
+  setIf('[name=id]', p.id);
+  setIf('[name=title]', p.title);
+  setIf('[name=slug]', p.slug);
+  setIf('[name=link]', p.link || '');
+  setIf('[name=github]', p.github || '');
+  setIf('[name=description]', p.description || '');
 }
 
 async function delProject(e){
