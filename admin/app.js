@@ -14,6 +14,19 @@ async function api(path, options={}){
   return parsed || (bodyText ? JSON.parse(bodyText) : {});
 }
 
+// Event delegation for project list (robust handling of Edit/Delete clicks)
+if(typeof projectsList !== 'undefined' && projectsList){
+  projectsList.addEventListener('click', async (e) => {
+    const btn = e.target.closest && e.target.closest('button');
+    if(!btn) return;
+    if(btn.classList.contains('edit')){
+      try{ await editProject({ currentTarget: btn, target: btn }); }catch(err){ console.error('editProject delegation error', err); }
+    } else if(btn.classList.contains('delete')){
+      try{ await delProject({ target: btn }); }catch(err){ console.error('delProject delegation error', err); }
+    }
+  });
+}
+
 async function checkBackend(){
   const msgEl = document.getElementById('login-msg');
   try{
