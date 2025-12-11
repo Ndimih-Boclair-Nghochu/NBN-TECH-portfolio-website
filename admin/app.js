@@ -38,8 +38,11 @@ async function checkBackend(){
     const hint = 'Backend unreachable. Make sure you open the site via the dev server: http://localhost:3000/admin/index.html';
     console.error('backend check failed', err);
     if(msgEl) msgEl.textContent = hint;
-    // disable login form
-    loginForm.querySelectorAll('input,button').forEach(i=>i.disabled=true);
+    // disable login form (lookup element at runtime to avoid hoisting issues)
+    try{
+      const lf = document.getElementById('login-form');
+      if(lf) lf.querySelectorAll('input,button').forEach(i=>i.disabled=true);
+    }catch(e){ /* ignore */ }
     return false;
   }
 }
