@@ -90,15 +90,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   
   async function editProject(id){
+    console.log('[editProject] Loading projects for id:', id);
     const projects = await api('/api/projects');
+    console.log('[editProject] Fetched projects:', projects);
     const p = projects.find(x => String(x.id) === String(id));
-    if(!p || !projectForm) return;
+    console.log('[editProject] Found project:', p);
+    if(!p) { console.error('[editProject] Project not found'); return; }
+    if(!projectForm) { console.error('[editProject] projectForm is null'); return; }
+    console.log('[editProject] Populating form with:', p);
     setIf(projectForm, '[name=id]', p.id);
     setIf(projectForm, '[name=title]', p.title);
     setIf(projectForm, '[name=slug]', p.slug);
     setIf(projectForm, '[name=link]', p.link || '');
     setIf(projectForm, '[name=github]', p.github || '');
     setIf(projectForm, '[name=description]', p.description || '');
+    console.log('[editProject] Form populated successfully');
   }
   
   async function deleteProject(id){
@@ -123,11 +129,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   if(projectsList){
     projectsList.addEventListener('click', async (e) => {
+      console.log('[projectsList click] Event target:', e.target);
       const btn = e.target.closest('button');
-      if(!btn) return;
+      console.log('[projectsList click] Closest button:', btn);
+      if(!btn) { console.log('[projectsList click] No button found'); return; }
       const id = btn.dataset.id;
-      if(btn.classList.contains('edit')) await editProject(id);
-      else if(btn.classList.contains('delete')) await deleteProject(id);
+      console.log('[projectsList click] Button id:', id, 'classList:', btn.className);
+      if(btn.classList.contains('edit')) { 
+        console.log('[projectsList click] Edit button clicked');
+        await editProject(id); 
+      }
+      else if(btn.classList.contains('delete')) { 
+        console.log('[projectsList click] Delete button clicked');
+        await deleteProject(id); 
+      }
     });
   }
   
