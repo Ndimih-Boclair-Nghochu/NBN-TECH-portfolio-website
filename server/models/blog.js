@@ -8,7 +8,9 @@ module.exports = (sequelize) => {
     excerpt: { type: DataTypes.STRING },
     content: { type: DataTypes.TEXT },
     image: { type: DataTypes.STRING },
-    externalLink: { type: DataTypes.STRING }
+    externalLink: { type: DataTypes.STRING },
+    ctaLink: { type: DataTypes.STRING },
+    ctaText: { type: DataTypes.STRING }
   }, {
     timestamps: true
   });

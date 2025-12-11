@@ -130,11 +130,11 @@ app.get('/api/blogs', async (req,res) => {
 });
 
 app.post('/api/blogs', requireAuth, upload.single('image'), async (req,res) => {
-  const { title, slug, excerpt, content, externalLink } = req.body;
+  const { title, slug, excerpt, content, externalLink, ctaLink, ctaText } = req.body;
   let imagePath = null;
   if(req.file) imagePath = '/uploads/' + path.basename(req.file.path);
   try{
-    const b = await db.Blog.create({ title, slug, excerpt, content, image: imagePath, externalLink });
+    const b = await db.Blog.create({ title, slug, excerpt, content, image: imagePath, externalLink, ctaLink, ctaText });
     res.json(b);
   }catch(err){ res.status(500).json({ error: err.message }); }
 });
@@ -142,9 +142,9 @@ app.post('/api/blogs', requireAuth, upload.single('image'), async (req,res) => {
 app.put('/api/blogs/:id', requireAuth, upload.single('image'), async (req,res) => {
   const b = await db.Blog.findByPk(req.params.id);
   if(!b) return res.status(404).json({ error: 'Not found' });
-  const { title, slug, excerpt, content, externalLink } = req.body;
+  const { title, slug, excerpt, content, externalLink, ctaLink, ctaText } = req.body;
   if(req.file) b.image = '/uploads/' + path.basename(req.file.path);
-  b.title = title; b.slug = slug; b.excerpt = excerpt; b.content = content; b.externalLink = externalLink;
+  b.title = title; b.slug = slug; b.excerpt = excerpt; b.content = content; b.externalLink = externalLink; b.ctaLink = ctaLink; b.ctaText = ctaText;
   await b.save();
   res.json(b);
 });

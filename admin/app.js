@@ -189,6 +189,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         setIf(blogForm, '[name=excerpt]', item.excerpt||'');
         setIf(blogForm, '[name=content]', item.content||'');
         setIf(blogForm, '[name=externalLink]', item.externalLink || '');
+        setIf(blogForm, '[name=ctaLink]', item.ctaLink || '');
+        setIf(blogForm, '[name=ctaText]', item.ctaText || '');
       } else if(btn.classList.contains('del-blog')){
         if(!confirm('Delete blog?')) return;
         await api('/api/blogs/'+id, { method:'DELETE' });
