@@ -341,6 +341,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         setIf(teamForm, '[name=bio]', it.bio||'');
         setIf(teamForm, '[name=linkedin]', it.linkedin||'');
         setIf(teamForm, '[name=website]', it.website||'');
+        setIf(teamForm, '[name=github]', it.github||'');
       } else if(btn.classList.contains('del-member')){
         if(!confirm('Delete member?')) return;
         await api('/api/team/'+id, { method:'DELETE' });

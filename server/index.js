@@ -212,8 +212,8 @@ app.delete('/api/skills/:id', requireAuth, async (req,res) => { const s = await 
 
 // Team members CRUD
 app.get('/api/team', async (req,res) => { const members = await db.TeamMember.findAll({ order:[['id','ASC']] }); res.json(members); });
-app.post('/api/team', requireAuth, upload.single('photo'), async (req,res) => { const { name, role, bio, linkedin, website } = req.body; let photo = null; if(req.file) photo = '/uploads/' + path.basename(req.file.path); const m = await db.TeamMember.create({ name, role, bio, linkedin, website, photo }); res.json(m); });
-app.put('/api/team/:id', requireAuth, upload.single('photo'), async (req,res) => { const m = await db.TeamMember.findByPk(req.params.id); if(!m) return res.status(404).json({ error:'Not found' }); const { name, role, bio, linkedin, website } = req.body; if(req.file) m.photo = '/uploads/' + path.basename(req.file.path); m.name = name; m.role = role; m.bio = bio; m.linkedin = linkedin; m.website = website; await m.save(); res.json(m); });
+app.post('/api/team', requireAuth, upload.single('photo'), async (req,res) => { const { name, role, bio, linkedin, website, github } = req.body; let photo = null; if(req.file) photo = '/uploads/' + path.basename(req.file.path); const m = await db.TeamMember.create({ name, role, bio, linkedin, website, github, photo }); res.json(m); });
+app.put('/api/team/:id', requireAuth, upload.single('photo'), async (req,res) => { const m = await db.TeamMember.findByPk(req.params.id); if(!m) return res.status(404).json({ error:'Not found' }); const { name, role, bio, linkedin, website, github } = req.body; if(req.file) m.photo = '/uploads/' + path.basename(req.file.path); m.name = name; m.role = role; m.bio = bio; m.linkedin = linkedin; m.website = website; m.github = github; await m.save(); res.json(m); });
 app.delete('/api/team/:id', requireAuth, async (req,res) => { const m = await db.TeamMember.findByPk(req.params.id); if(!m) return res.status(404).json({ error:'Not found' }); await m.destroy(); res.json({ ok:true }); });
 
 // Contact submissions

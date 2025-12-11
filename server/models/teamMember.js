@@ -8,7 +8,8 @@ module.exports = (sequelize) => {
     bio: { type: DataTypes.TEXT },
     photo: { type: DataTypes.STRING },
     linkedin: { type: DataTypes.STRING },
-    website: { type: DataTypes.STRING }
+    website: { type: DataTypes.STRING },
+    github: { type: DataTypes.STRING }
   }, {
     timestamps: true
   });
