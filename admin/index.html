@@ -140,28 +140,47 @@
         font-size: 13px;
       }
     }
+
+    #login-section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 20px;
+    }
+
+    #login-section[hidden] {
+      display: none;
+    }
+
+    #dashboard[hidden] {
+      display: none;
+    }
   </style>
 </head>
-<body class="login-page">
-  <div class="login-container">
-    <div class="login-header">
-      <h1>NBN TECH Admin</h1>
-      <p>Sign in to access the dashboard</p>
-    </div>
+<body>
+  <section id="login-section">
+    <div class="login-container">
+      <div class="login-header">
+        <h1>NBN TECH Admin</h1>
+        <p>Sign in to access the dashboard</p>
+      </div>
 
-    <form id="login-form" class="login-form">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input id="email" type="email" placeholder="admin@nbntechportfolio.com" required>
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input id="password" type="password" placeholder="••••••••" required>
-      </div>
-      <button type="submit" class="submit-btn">Sign In</button>
-    </form>
-    <div id="login-msg" class="login-msg"></div>
-  </div>
+      <form id="login-form" class="login-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" placeholder="admin@nbntechportfolio.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="submit-btn">Sign In</button>
+      </form>
+      <div id="login-msg" class="login-msg"></div>
+    </div>
+  </section>
 
   <div class="admin-wrap" id="dashboard" hidden>
     <header>
