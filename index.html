@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Portfolio</title>
+	<link rel="stylesheet" href="style.css">
+	</head>
+<body>
+	<nav class="site-nav" role="navigation">
+		<div class="nav-brand">
+			<h3>NBN TECH</h3>
+		</div>
+		<button class="nav-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="hamburger"></span>
+		</button>
+		<div id="primary-nav" class="nav-links">
+			<a href="index.html">Home</a>
+			<a href="about.html">About</a>
+			<a href="skills.html">Skills</a>
+			<a href="portfolio.html">Portfolio</a>
+			<a href="services.html">Services</a>
+			<a href="blogs.html">Blogs</a>
+			<a href="contact.html">Contact</a>
+			<a href="http://localhost:3000/admin/index.html" class="admin-link" title="Admin dashboard" aria-label="Admin dashboard">
+			  <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+				<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" fill="none"></circle>
+				<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06A2 2 0 1 1 2.3 17.9l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82L4.3 3.3A2 2 0 1 1 7.13.47l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 1 1 4 0v.09c.3.12.58.3.82.54l.06.06A1.65 1.65 0 0 0 17.9 5.8h.09a2 2 0 1 1 0 4h-.09c-.7 0-1.35.41-1.51 1z" stroke="currentColor" stroke-width="1.2" fill="none"></path>
+			  </svg>
+			</a>
+		</div>
+	</nav>
+
+	<div class="hero" data-animate>
+		<h1>Hello, I'm <span>Your Name</span></h1>
+		<p>A passionate Web Developer creating modern & responsive designs.</p>
+		<a href="#portfolio" class="btn">View My Work</a>
+	</div>
+
+	<section id="about" class="about" data-animate>
+		<h2>About Me</h2>
+		<p>I am a front-end developer with experience building accessible, responsive websites and single-page applications. I enjoy turning designs into fast, user-friendly interfaces and learning new tools to improve developer workflows.</p>
+		<p><strong>Highlights:</strong></p>
+		<ul class="highlights">
+			<li>3+ years building web apps with modern JavaScript frameworks.</li>
+			<li>Experience with responsive design, performance optimization, and accessibility.</li>
+			<li>Open-source contributor and active learner of new web standards.</li>
+			<li>Deployed production applications to cloud platforms (AWS, S3, Lambda).</li>
+			<li>Strong collaboration with teams using Agile workflows and code review practices.</li>
+		</ul>
+	</section>
+
+	<section id="skills" data-animate>
+		<h2>Skills</h2>
+		<div class="skills-grid">
+			<div class="skill">
+				<h3>AWS</h3>
+				<p>Cloud architecture, S3, Lambda, and deployment pipelines.</p>
+			</div>
+			<div class="skill">
+				<h3>Python</h3>
+				<p>Backend scripting, automation, data work, and web frameworks.</p>
+			</div>
+			<div class="skill">
+				<h3>HTML</h3>
+				<p>Semantic markup and accessibility-first structure.</p>
+			</div>
+			<div class="skill">
+				<h3>JavaScript</h3>
+				<p>Modern JS (ES6+), DOM, and interactive UI behaviors.</p>
+			</div>
+		</div>
+		<div class="section-actions" style="text-align:center;margin-top:18px">
+			<a class="btn" href="skills.html">See more skills</a>
+		</div>
+	</section>
+
+	<section id="services" class="services" data-animate>
+		<h2>Services</h2>
+		<p>We offer a range of services to help you build and scale your product.</p>
+		<div class="services-grid">
+			<div class="service-card"><h3>Cloud Computing & DevOps</h3><p>AWS infrastructure, CI/CD pipelines, and deployment automation.</p></div>
+			<div class="service-card"><h3>Web Development</h3><p>Full-stack web applications built with modern frameworks and best practices.</p></div>
+			<div class="service-card"><h3>Graphic & Logo Designs</h3><p>Professional branding, visual identities, and design assets.</p></div>
+		</div>
+		<div class="section-actions" style="text-align:center;margin-top:18px">
+			<a class="btn" href="services.html">See more services</a>
+		</div>
+	</section>
+
+	<section id="portfolio" data-animate>
+		<h2>Portfolio</h2>
+		<div id="portfolio-grid" class="portfolio-grid">
+			<!-- Projects loaded dynamically from API -->
+		</div>
+		<div class="section-actions" style="text-align:center;margin-top:18px">
+			<a class="btn" href="portfolio.html">See more projects</a>
+		</div>
+	</section>
+
+	<section id="reviews" class="reviews" data-animate>
+		<h2>Reviews</h2>
+		<p>What clients and partners say about our work.</p>
+		<div id="reviews-container" class="reviews-grid">
+			<!-- reviews rendered here by script; seeded defaults will appear if none saved -->
+		</div>
+		<div style="text-align:center;margin-top:12px">
+			<button id="add-review" class="btn">Add review</button>
+		</div>
+	</section>
+
+  <!-- Review Modal -->
+  <div id="review-modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-modal-close></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="review-title">
+      <button class="modal-close" data-modal-close aria-label="Close">×</button>
+      <h3 id="review-title">Add a review</h3>
+      <form id="review-form">
+        <div class="form-row"><label for="review-author">Your name</label><input id="review-author" name="author" required></div>
+        <div class="form-row"><label for="review-role">Role / Company</label><input id="review-role" name="role"></div>
+				<div class="form-row"><label for="review-rating">Rating</label>
+					<select id="review-rating" name="rating">
+						<option value="">— select —</option>
+						<option value="5">5 — Excellent</option>
+						<option value="4">4 — Very good</option>
+						<option value="3">3 — Good</option>
+						<option value="2">2 — Fair</option>
+						<option value="1">1 — Poor</option>
+					</select>
+				</div>
+        <div class="form-row"><label for="review-text">Review</label><textarea id="review-text" name="text" rows="4" required></textarea></div>
+        <div style="text-align:right"><button type="submit" class="btn">Submit review</button></div>
+      </form>
+    </div>
+  </div>
+
+	<section id="contact" class="contact" data-animate>
+		<h2>Latest Blog Posts</h2>
+		<p>Read the latest articles and updates from my development journey.</p>
+		<div class="blog-list">
+			<article class="blog-post">
+				<h3><a href="blogs.html#post-1">Building Accessible Components</a></h3>
+				<p class="excerpt">Best practices for creating accessible, reusable UI components that work for everyone.</p>
+			</article>
+			<article class="blog-post">
+				<h3><a href="blogs.html#post-2">Optimizing Frontend Performance</a></h3>
+				<p class="excerpt">Tips to improve site speed, reduce bundle size, and deliver better UX.</p>
+			</article>
+			<article class="blog-post">
+				<h3><a href="blogs.html#post-3">Designing a Simple CMS</a></h3>
+				<p class="excerpt">How I built a small admin interface to manage projects and blog posts.</p>
+			</article>
+		</div>
+		<div class="section-actions" style="text-align:center;margin-top:18px">
+			<a class="btn" href="blogs.html">See more blogs</a>
+		</div>
+	</section>
+
+
+
+	<footer>© 2025 Portfolio</footer>
+	<footer>
+	  <div class="footer-inner">
+	    <div class="footer-col">
+	      <div class="footer-brand">Portfolio</div>
+	      <p class="footer-contact">Email: <a href="mailto:email@example.com">email@example.com</a><br>Phone: +1 (555) 123-4567</p>
+	    </div>
+	    <div class="footer-col footer-links">
+	      <strong>Quick links</strong>
+	      <a href="index.html">Home</a>
+	      <a href="portfolio.html">Projects</a>
+	      <a href="blogs.html">Blogs</a>
+	      <a href="contact.html">Contact</a>
+	    </div>
+	    <div class="footer-col">
+	      <strong>About</strong>
+	      <p class="muted">Small engineering team specializing in performant, accessible web apps.</p>
+	    </div>
+	  </div>
+	</footer>
+	<script src="script.js"></script>
+	</body>
+</html>

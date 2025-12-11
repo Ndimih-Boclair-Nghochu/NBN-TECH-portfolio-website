@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="grad" x1="0" x2="1">
+      <stop offset="0" stop-color="#0f4c81" />
+      <stop offset="1" stop-color="#2aa0e8" />
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="30" result="b" />
+      <feBlend in="SourceGraphic" in2="b" mode="normal" />
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#grad)" />
+  <g filter="url(#soft)" opacity="0.12">
+    <circle cx="420" cy="320" r="260" fill="#ffffff" />
+    <circle cx="1180" cy="520" r="320" fill="#ffffff" />
+  </g>
+  <g opacity="0.06">
+    <rect x="0" y="0" width="1600" height="900" fill="#000"/>
+  </g>
+</svg>

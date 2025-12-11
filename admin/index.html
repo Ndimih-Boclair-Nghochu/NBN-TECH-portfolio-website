@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>NBN TECH TEAM — Admin</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="admin-wrap">
+    <header>
+      <h1>NBN TECH TEAM Admin</h1>
+      <div id="admin-user" class="admin-user">
+        <!-- populated after login -->
+      </div>
+    </header>
+
+    <main>
+      <section id="login-section">
+        <h2>Admin Login</h2>
+        <form id="login-form">
+          <label>Email<input id="email" type="email" required></label>
+          <label>Password<input id="password" type="password" required></label>
+          <button type="submit" class="btn">Login</button>
+        </form>
+        <div id="login-msg"></div>
+      </section>
+
+      <section id="dashboard" hidden>
+        <nav class="admin-nav" role="tablist" aria-label="Admin sections">
+            <button data-section="projects" class="admin-tab">Projects</button>
+            <button data-section="blogs" class="admin-tab">Blogs</button>
+            <button data-section="services" class="admin-tab">Services</button>
+            <button data-section="skills" class="admin-tab">Skills</button>
+            <button data-section="team" class="admin-tab">Team</button>
+            <button data-section="reviews" class="admin-tab">Reviews</button>
+          </nav>
+            <button data-section="reviews" class="admin-tab">Reviews</button>
+          </nav>
+
+          <div class="admin-section" id="section-projects">
+            <h3>Projects</h3>
+            <form id="project-form" enctype="multipart/form-data">
+              <input name="id" type="hidden">
+              <label>Title<input name="title" required></label>
+              <label>Slug<input name="slug" required></label>
+              <label>Live Link<input name="link" placeholder="https://..."></label>
+              <label>GitHub Link<input name="github" placeholder="https://github.com/..."></label>
+              <label>Description<textarea name="description"></textarea></label>
+              <label>Image<input name="image" type="file" accept="image/*"></label>
+              <button type="submit" class="btn">Save Project</button>
+            </form>
+            <div id="projects-list"></div>
+          </div>
+
+          <div class="admin-section" id="section-blogs" hidden>
+            <h3>Blogs</h3>
+            <form id="blog-form" enctype="multipart/form-data">
+              <input name="id" type="hidden">
+              <label>Title<input name="title" required></label>
+              <label>Slug<input name="slug" required></label>
+              <label>External link<input name="externalLink" placeholder="https://..." ></label>
+              <label>Excerpt<input name="excerpt"></label>
+              <label>Content<textarea name="content"></textarea></label>
+              <label>Image<input name="image" type="file" accept="image/*"></label>
+              <button type="submit" class="btn">Save Blog</button>
+            </form>
+            <div id="blogs-list"></div>
+          </div>
+
+          <div class="admin-section" id="section-services" hidden>
+            <h3>Services</h3>
+            <form id="service-form" enctype="multipart/form-data">
+              <input name="id" type="hidden">
+              <label>Name<input name="name" required></label>
+              <label>Slug<input name="slug" required></label>
+              <label>Description<textarea name="description"></textarea></label>
+              <label>Icon<input name="icon" type="file" accept="image/*"></label>
+              <button type="submit" class="btn">Save Service</button>
+            </form>
+            <div id="services-list"></div>
+          </div>
+
+          <div class="admin-section" id="section-skills" hidden>
+            <h3>Skills</h3>
+            <form id="skill-form">
+              <input name="id" type="hidden">
+              <label>Name<input name="name" required></label>
+              <label>Level<input name="level"></label>
+              <label>Order<input name="order" type="number"></label>
+              <button type="submit" class="btn">Save Skill</button>
+            </form>
+            <div id="skills-list"></div>
+          </div>
+
+          <div class="admin-section" id="section-team" hidden>
+            <h3>Team</h3>
+            <form id="team-form" enctype="multipart/form-data">
+              <input name="id" type="hidden">
+              <label>Name<input name="name" required></label>
+              <label>Role<input name="role"></label>
+              <label>Bio<textarea name="bio"></textarea></label>
+              <label>LinkedIn<input name="linkedin" placeholder="https://linkedin.com/in/..."></label>
+              <label>Website<input name="website" placeholder="https://yourwebsite.com"></label>
+              <label>Photo<input name="photo" type="file" accept="image/*"></label>
+              <button type="submit" class="btn">Save Member</button>
+            </form>
+            <div id="team-list"></div>
+          </div>
+
+          <div class="admin-section" id="section-reviews" hidden>
+            <h3>Reviews</h3>
+            <p>Manage public reviews submitted by visitors.</p>
+            <div id="reviews-list"></div>
+          </div>
+        </section>
+    </main>
+
+  <script src="/admin/app.js"></script>
+</body>
+</html>
