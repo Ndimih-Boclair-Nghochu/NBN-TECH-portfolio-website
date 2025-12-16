@@ -1,0 +1,10 @@
+# Ignore terraform state locally
+*.tfstate
+*.tfstate.backup
+.terraform/
+crash.log
+override.tf
+override.tf.json
+
+# ignore local AWS keys
+.aws/

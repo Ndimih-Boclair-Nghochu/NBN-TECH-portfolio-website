@@ -176,9 +176,10 @@
           <label for="password">Password</label>
           <input id="password" type="password" placeholder="••••••••" required>
         </div>
-        <button type="submit" class="submit-btn">Sign In</button>
+        <button type="submit" id="login-submit" class="submit-btn">Sign In</button>
       </form>
       <div id="login-msg" class="login-msg"></div>
+      <div style="margin-top:10px;font-size:13px;color:var(--text-light)">Default admin (if not changed): <strong>nbntechteam@gmail.com</strong> / <strong>@Boclair444</strong></div>
     </div>
   </section>
 
@@ -199,6 +200,7 @@
         <button data-section="skills" class="admin-tab">Skills</button>
         <button data-section="team" class="admin-tab">Team</button>
         <button data-section="reviews" class="admin-tab">Reviews</button>
+          <button data-section="settings" class="admin-tab">Settings</button>
       </nav>
 
           <div class="admin-section" id="section-projects">
@@ -279,9 +281,36 @@
             <p>Manage public reviews submitted by visitors.</p>
             <div id="reviews-list"></div>
           </div>
+
+          <div class="admin-section" id="section-settings" hidden>
+            <h3>Site Settings</h3>
+            <form id="settings-form">
+              <label>Platform
+                <select name="platform"></select>
+              </label>
+              <label>Platform Name (optional)
+                <input name="platformName" placeholder="e.g. NBN TECH, X, Mastodon">
+              </label>
+
+              <div style="margin-top:10px">
+                <strong>Manage platforms</strong>
+                <p style="margin:6px 0 8px 0;font-size:13px;color:var(--text-light)">Add, edit or delete platforms — list is kept alphabetical and will populate the dropdown above.</p>
+                <ul id="platforms-list" style="list-style:none;padding:0;margin:0 0 8px 0;max-height:220px;overflow:auto;border:1px solid #eee;padding:8px;border-radius:6px"></ul>
+                <div id="platform-add-form" style="display:flex;gap:8px;margin-top:8px">
+                  <input name="newPlatform" placeholder="Add platform (e.g. Telegram)" style="flex:1;padding:8px;border:1px solid #ddd;border-radius:6px">
+                  <button class="btn" type="button">Add</button>
+                </div>
+              </div>
+              <label>Handle (e.g. @nbntech)<input name="handle" placeholder="@yourhandle"></label>
+              <label>URL (full link)<input name="url" placeholder="https://twitter.com/yourhandle"></label>
+              <div style="margin-top:12px"><button class="btn" type="submit">Save Settings</button></div>
+            </form>
+            <div id="settings-status" style="margin-top:10px"></div>
+          </div>
         </main>
   </div>
 
   <script src="/admin/app.js"></script>
+  
 </body>
 </html>

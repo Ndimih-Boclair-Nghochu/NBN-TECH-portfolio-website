@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 
 async function sync(){
   await db.sequelize.sync({ alter: true });
-  const adminEmail = process.env.ADMIN_EMAIL || 'ndimihboclair4@gmail.com';
+  const adminEmail = process.env.ADMIN_EMAIL || 'nbntechteam@gmail.com';
   const adminPassword = process.env.ADMIN_PASSWORD || '@Boclair444';
   const User = db.User;
   const existing = await User.findOne({ where: { email: adminEmail } });

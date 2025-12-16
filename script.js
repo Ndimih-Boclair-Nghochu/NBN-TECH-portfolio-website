@@ -1,5 +1,49 @@
 const items = document.querySelectorAll('[data-animate]');
 
+// Reviews carousel state
+let reviewIntervalId = null;
+let reviewIndex = 0;
+
+// Global fallback toggle for nav (inline onclick fallback)
+function toggleNav(e){
+	// Resolve the toggle button element from event or fallback to first
+	var navToggle = null;
+	if(e && e.currentTarget) navToggle = e.currentTarget;
+	else if(e && e.target && e.target.closest) navToggle = e.target.closest('.nav-toggle');
+	if(!navToggle) navToggle = document.querySelector('.nav-toggle');
+	if(!navToggle) return;
+	if(e && e.stopPropagation) e.stopPropagation();
+	var nav = navToggle.closest('.site-nav') || document;
+	var navLinks = nav.querySelector('#primary-nav') || document.getElementById('primary-nav');
+	if(!navLinks) return;
+	var open = navLinks.classList.toggle('open');
+	navToggle.classList.toggle('open', open);
+	navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+	console.debug('toggleNav called — open:', open);
+}
+window.toggleNav = toggleNav;
+
+// Ensure `.nav-toggle` uses event listener (more reliable than inline onclick across contexts)
+document.addEventListener('DOMContentLoaded', () => {
+	const navToggle = document.querySelector('.nav-toggle');
+	if(navToggle) navToggle.addEventListener('click', (e) => {
+		// pass through the event and element
+		toggleNav(e);
+	});
+
+	// Close mobile menu when resizing back to desktop widths
+	window.addEventListener('resize', () => {
+		try{
+			if(window.innerWidth > 900){
+				const navLinks = document.getElementById('primary-nav');
+				const navT = document.querySelector('.nav-toggle');
+				if(navLinks && navLinks.classList.contains('open')) navLinks.classList.remove('open');
+				if(navT && navT.classList.contains('open')){ navT.classList.remove('open'); navT.setAttribute('aria-expanded','false'); }
+			}
+		}catch(e){ /* ignore */ }
+	});
+});
+
 function onScroll(){
 	items.forEach(i => {
 		if(i.getBoundingClientRect().top < window.innerHeight - 100) i.classList.add('active');
@@ -55,29 +99,7 @@ function highlightActiveNav(){
 }
 document.addEventListener('DOMContentLoaded', highlightActiveNav);
  
-// Mobile nav toggle (hamburger)
-document.addEventListener('DOMContentLoaded', () => {
-	const navToggle = document.querySelector('.nav-toggle');
-	const navLinks = document.getElementById('primary-nav');
-	if(!navToggle || !navLinks) return;
-
-	navToggle.addEventListener('click', (e) => {
-		e.stopPropagation();
-		const open = navLinks.classList.toggle('open');
-		navToggle.classList.toggle('open', open);
-		navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-	});
-
-	// Close nav when clicking outside (use capture to run early)
-	document.addEventListener('click', (e) => {
-		if(!navLinks.classList.contains('open')) return;
-		if(!navLinks.contains(e.target) && !navToggle.contains(e.target)){
-			navLinks.classList.remove('open');
-			navToggle.classList.remove('open');
-			navToggle.setAttribute('aria-expanded', 'false');
-		}
-	}, true);
-});
+// (nav toggle handled in consolidated block later)
 
 // Smooth scrolling for internal links
 document.querySelectorAll('a[href^="#"]').forEach(a => {
@@ -120,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			if(res.ok){ if(statusEl) statusEl.innerHTML = '<strong>Message sent. Thanks!</strong>'; contactForm.reset(); return; }
 			// non-OK: fallback to mailto
 			const mailtoBody = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
-			const mailto = `mailto:hello@example.com?subject=${encodeURIComponent(subject||'Contact from website')}&body=${mailtoBody}`;
+			const mailto = `mailto:nbntechteam@gmail.com?subject=${encodeURIComponent(subject||'Contact from website')}&body=${mailtoBody}`;
 			window.location.href = mailto; if(statusEl) statusEl.textContent = 'Opened your email client as a fallback.';
 		}catch(err){
 			console.error('Contact send error', err);
@@ -131,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				localStorage.setItem('contact_messages', JSON.stringify(stored));
 			}catch(e){ /* ignore */ }
 			const mailtoBody = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
-			const mailto = `mailto:hello@example.com?subject=${encodeURIComponent(subject||'Contact from website')}&body=${mailtoBody}`;
+			const mailto = `mailto:nbntechteam@gmail.com?subject=${encodeURIComponent(subject||'Contact from website')}&body=${mailtoBody}`;
 			window.location.href = mailto; if(statusEl) statusEl.textContent = 'Saved locally and opened email client as fallback.';
 		}
 	});
@@ -140,15 +162,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Fetch and render blog posts from API
-async function fetchBlogs(){
+async function fetchBlogs(limit){
 	const container = document.getElementById('blogs-container');
 	if(!container) return;
 	container.innerHTML = '<p class="muted">Loading posts…</p>';
 	try{
-		const res = await fetch('/api/blogs');
-		if(!res.ok) throw new Error('Failed to load');
-		const posts = await res.json();
-		if(!posts.length){ container.innerHTML = '<p class="muted">No posts yet.</p>'; return; }
+		// try API (fallback disabled by default)
+		let posts = await fetchJsonWithFallback('/api/blogs','data/fallback/blogs.json');
+		if(!posts || !posts.length){ container.innerHTML = '<p class="muted">No posts yet.</p>'; return; }
+		// sort by createdAt desc (newest first) when available
+		posts.sort((a,b) => {
+			const ta = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+			const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+			return tb - ta;
+		});
+		if(typeof limit === 'number' && isFinite(limit) && limit > 0){ posts = posts.slice(0, limit); }
 		container.innerHTML = posts.map(p => {
 			const readMoreHref = `blog.html?id=${encodeURIComponent(p.id)}`;
 			const externalHref = p.externalLink || null;
@@ -171,7 +199,7 @@ async function fetchBlogs(){
 }
 
 // Fetch and render projects from API
-async function fetchProjects(){
+async function fetchProjects(limit){
 	const container = document.getElementById('projects-container');
 	const homeContainer = document.getElementById('portfolio-grid');
 	const target = container || homeContainer;
@@ -182,13 +210,17 @@ async function fetchProjects(){
 	}
 	target.innerHTML = '<p class="muted">Loading projects…</p>';
 	try{
-		console.log('Fetching from /api/projects');
-		const res = await fetch('/api/projects');
-		console.log('Response status:', res.status);
-		if(!res.ok) throw new Error('Failed to load (status ' + res.status + ')');
-		const items = await res.json();
+		console.log('Fetching projects (API)');
+		let items = await fetchJsonWithFallback('/api/projects','data/fallback/projects.json');
 		console.log('Fetched projects:', items);
-		if(!items.length){ target.innerHTML = '<p class="muted">No projects yet.</p>'; return; }
+		if(!items || !items.length){ target.innerHTML = '<p class="muted">No projects yet.</p>'; return; }
+		// sort by createdAt desc if available
+		items.sort((a,b) => {
+			const ta = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+			const tb = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+			return tb - ta;
+		});
+		if(typeof limit === 'number' && isFinite(limit) && limit > 0){ items = items.slice(0, limit); }
 		// For home page: show as carousel (3 at a time, rotating)
 		if(homeContainer === target){
 			console.log('Rendering carousel on home page');
@@ -318,17 +350,147 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Load projects on home page too
 	if(path === '' || path === 'index.html') {
 		console.log('Loading projects for home page');
-		fetchProjects();
+		fetchProjects(3);
+		// also load latest blogs on the home page
+		console.log('Loading blogs for home page');
+		fetchBlogs(3);
+		// load realtime statistics and poll for updates
+		if(document.getElementById('statistics')){
+			fetchStats();
+			setInterval(fetchStats, 30000); // refresh counts every 30s
+		}
 	}
 });
+
+	// Load and render site-level settings (social handle)
+	async function loadSiteSettings(){
+		try{
+			const res = await fetch('/api/settings');
+			if(!res.ok) throw new Error('No settings');
+			const s = await res.json();
+			renderSiteSocial(s);
+		}catch(err){
+			// fallback: nothing
+			renderSiteSocial(null);
+		}
+	}
+
+	function renderSiteSocial(s){
+			document.querySelectorAll('.site-social').forEach(el => {
+				if(!s || (!s.handle && !s.url)) { el.textContent = ''; return; }
+				// Prefer admin-provided platformName (free-text) when present, otherwise fall back to platform
+				const label = s.platformName && String(s.platformName).trim() ? String(s.platformName).trim() : (s.platform ? s.platform : '');
+				const text = (label ? label + ': ' : '') + (s.handle || s.url);
+				if(s.url){
+					const icon = getPlatformIcon(s.platform || label);
+					el.innerHTML = `<a href="${s.url}" target="_blank" rel="noopener noreferrer">${icon}<span class="site-social-text">${escapeHtml(text)}</span></a>`;
+				}else{
+					const icon = getPlatformIcon(s.platform || label);
+					el.innerHTML = `${icon}<span class="site-social-text">${escapeHtml(text)}</span>`;
+				}
+			});
+	}
+
+// Return inline SVG for common platforms; fallback to generic link icon
+function getPlatformIcon(name){
+    if(!name) return '';
+    const n = String(name).toLowerCase();
+    if(n.includes('telegram')) return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;margin-right:6px;vertical-align:middle;fill:currentColor"><path d="M21.6 3.2c-.3-.2-.7-.2-1 .0L2.6 10.1c-.8.3-.8 1.5.1 1.8l4.7 1.4 1.9 6.1c.2.7 1.2.8 1.6.2l2.2-3.1 3.6 2.6c.6.4 1.4-.1 1.1-.8L22 4.3c-.1-.4-.3-.7-.4-1.1z"></path></svg>';
+    if(n.includes('twitter')) return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;margin-right:6px;vertical-align:middle;fill:currentColor"><path d="M22 5.9c-.6.3-1.2.5-1.9.6.7-.4 1.2-1 1.4-1.8-.6.4-1.4.6-2.2.8C18.5 4.9 17.6 4.5 16.6 4.5c-1.6 0-2.9 1.3-2.9 2.9 0 .2 0 .4.0.6C10.9 7.8 8 6.2 6 3.8c-.3.6-.5 1.3-.5 2 0 1.3.6 2.5 1.6 3.2-.6 0-1.2-.2-1.7-.5v.0c0 1.9 1.3 3.5 3 3.9-.3.1-.6.1-.9.1-.2 0-.4 0-.6-.1.4 1.3 1.6 2.2 3 2.2-1.1.8-2.4 1.2-3.9 1.2-.2 0-.4 0-.6-.0 1.4.9 3 1.4 4.7 1.4 5.6 0 8.6-4.7 8.6-8.6v-.4c.6-.4 1.1-1 1.5-1.6-.6.3-1.2.5-1.9.6z"></path></svg>';
+    if(n.includes('mastodon')) return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;margin-right:6px;vertical-align:middle;fill:currentColor"><path d="M12 2C7 2 4 5 4 10v3c0 3.3 2.7 6 6 6 1.4 0 2.7-.5 3.7-1.4.5-.4 1.1-.6 1.8-.6s1.3.2 1.8.6C21.3 19 24 16.3 24 13v-3c0-5-3-8-12-8z"></path></svg>';
+    if(n.includes('github') || n.includes('git')) return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;margin-right:6px;vertical-align:middle;fill:currentColor"><path d="M12 .5C5.7.5.8 5.4.8 11.7c0 4.7 3 8.7 7.2 10.1.5.1.7-.2.7-.5v-1.9c-2.9.6-3.5-1.2-3.5-1.2-.5-1.3-1.2-1.6-1.2-1.6-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 .1 1.6.8 1.9 1.1.1-.9.4-1.6.8-2-2.3-.3-4.7-1.1-4.7-4.9 0-1.1.4-2 1.1-2.7-.1-.3-.5-1.3.1-2.7 0 0 .9-.3 3 .9.9-.2 1.8-.4 2.7-.4s1.8.1 2.7.4c2.1-1.3 3-.9 3-.9.6 1.4.2 2.4.1 2.7.7.7 1.1 1.6 1.1 2.7 0 3.8-2.4 4.6-4.7 4.9.4.3.7 1 .7 2v3c0 .3.2.6.7.5 4.2-1.4 7.2-5.4 7.2-10.1C23.2 5.4 18.3.5 12 .5z"></path></svg>';
+    if(n.includes('linkedin') || n.includes('in')) return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;margin-right:6px;vertical-align:middle;fill:currentColor"><path d="M4.98 3.5C3.88 3.5 3 4.4 3 5.5s.88 2 1.98 2H5c1.1 0 2-.9 2-2S6.08 3.5 5 3.5h-.02zM3 8.98h3.96V21H3V8.98zM9 8.98H13v1.6h.1c.6-1 2.1-2.1 4.3-2.1 4.6 0 5.4 3 5.4 6.9V21h-4v-5.6c0-1.3 0-3-1.9-3-1.9 0-2.2 1.5-2.2 2.9V21H9V8.98z"></path></svg>';
+    // fallback generic link icon
+    return '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" style="width:18px;height:18px;margin-right:6px;vertical-align:middle;fill:currentColor"><path d="M3.9 12c0-2 1.6-3.6 3.6-3.6h3v1.8h-3c-1 0-1.8.8-1.8 1.8s.8 1.8 1.8 1.8h3v1.8h-3c-2 0-3.6-1.6-3.6-3.6zM8.1 9.6h7.8c1 0 1.8.8 1.8 1.8s-.8 1.8-1.8 1.8H8.1v-1.8h7.8c.2 0 .4-.2.4-.4s-.2-.4-.4-.4H8.1V9.6z"></path></svg>';
+}
+
+	// reload when admin updates settings (localStorage broadcast)
+	window.addEventListener('storage', (e) => {
+		if(e.key === 'site-settings-updated') loadSiteSettings();
+	});
+
+	document.addEventListener('DOMContentLoaded', loadSiteSettings);
+
+// Helper: fetch JSON from API, fall back to a local JSON file path when API fails
+async function fetchJsonWithFallback(apiPath, fallbackPath){
+	const ALLOW_FALLBACK = false; // set to true only for local dev/testing
+	try{
+		const r = await fetch(apiPath);
+		if(r && r.ok) return await r.json();
+	}catch(e){ /* network or CORS error */ }
+	if(!ALLOW_FALLBACK) return null;
+	try{
+		const r2 = await fetch(fallbackPath);
+		if(r2 && r2.ok) return await r2.json();
+	}catch(e){ /* no fallback */ }
+	return null;
+}
+
+// Animated count helper
+function animateCount(el, end, duration = 900){
+	if(!el) return;
+	const start = Number(el.getAttribute('data-last') || 0) || 0;
+	const target = Number(end) || 0;
+	const startTime = performance.now();
+	function tick(now){
+		const p = Math.min((now - startTime) / duration, 1);
+		const value = Math.floor(start + (target - start) * p);
+		el.textContent = value;
+		if(p < 1) requestAnimationFrame(tick);
+		else el.setAttribute('data-last', String(target));
+	}
+	requestAnimationFrame(tick);
+}
+
+// Fetch and display real-time counts for projects, blogs, team and reviews
+async function fetchStats(){
+	try{
+		// Projects count
+		let projectsCount = 0;
+		try{
+			const resP = await fetch('/api/projects');
+			if(resP.ok){
+				const items = await resP.json();
+				projectsCount = Array.isArray(items) ? items.length : 0;
+			}
+		}catch(e){ console.warn('projects count fetch failed', e); }
+
+		// Blogs count
+		let blogsCount = 0;
+		try{
+			const resB = await fetch('/api/blogs');
+			if(resB.ok){ const b = await resB.json(); blogsCount = Array.isArray(b) ? b.length : 0; }
+		}catch(e){ console.warn('blogs count fetch failed', e); }
+
+		// Team count
+		let teamCount = 0;
+		try{
+			const resT = await fetch('/api/team');
+			if(resT.ok){ const t = await resT.json(); teamCount = Array.isArray(t) ? t.length : 0; }
+		}catch(e){ console.warn('team count fetch failed', e); }
+
+		// Reviews count
+		let reviewsCount = 0;
+		try{
+			const resR = await fetch('/api/reviews');
+			if(resR.ok){ const r = await resR.json(); reviewsCount = Array.isArray(r) ? r.length : 0; }
+		}catch(e){ console.warn('reviews count fetch failed', e); }
+
+		// Fallbacks: if API missing, try using localStorage where applicable
+		try{ if(!projectsCount) projectsCount = Number(localStorage.getItem('projects_count')||projectsCount); }catch(e){}
+
+		const elP = document.getElementById('stat-projects'); if(elP) animateCount(elP, projectsCount);
+		const elB = document.getElementById('stat-blogs'); if(elB) animateCount(elB, blogsCount);
+		const elT = document.getElementById('stat-team'); if(elT) animateCount(elT, teamCount);
+		const elR = document.getElementById('stat-reviews'); if(elR) animateCount(elR, reviewsCount);
+	}catch(err){ console.error('fetchStats error', err); }
+}
 
 // --- Reviews: modal, localStorage, rendering ---
 const REVIEWS_KEY = 'nbn_reviews_v1';
 async function defaultReviews(){
-	return [
-		{author:'Jane Doe', role:'CEO', text:'NBN TECH delivered an excellent product on time — highly recommended.', createdAt: new Date().toISOString()},
-		{author:'John Smith', role:'Founder', text:'Professional team and great communication throughout the project.', createdAt: new Date().toISOString()}
-	];
+	// Do not return seeded demo reviews — default to empty so only real reviews appear
+	return [];
 }
 
 async function loadReviews(){
@@ -345,9 +507,9 @@ async function loadReviews(){
 
 	try{
 		const raw = localStorage.getItem(REVIEWS_KEY);
-		if(!raw) return await defaultReviews();
+		if(!raw) return [];
 		return JSON.parse(raw);
-	}catch(e){ console.error('loadReviews', e); return await defaultReviews(); }
+	}catch(e){ console.error('loadReviews', e); return []; }
 }
 
 function saveReviewsLocal(reviews){
@@ -370,6 +532,9 @@ async function renderReviews(){
 			</div>
 		</div>
 	`}).join('');
+
+	// start carousel after rendering
+	startReviewCarousel();
 }
 
 function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -382,6 +547,30 @@ function openModal(){
 }
 function closeModal(){
 	const modal = document.getElementById('review-modal'); if(!modal) return; modal.setAttribute('aria-hidden','true'); modal.classList.remove('open');
+}
+
+function startReviewCarousel(){
+	const container = document.getElementById('reviews-container');
+	if(!container) return;
+	const cards = container.querySelectorAll('.review-card');
+	if(!cards || cards.length === 0) return;
+	// stop any existing interval
+	if(reviewIntervalId) clearInterval(reviewIntervalId);
+	reviewIndex = 0;
+	// ensure start position
+	container.scrollLeft = 0;
+	if(cards.length === 1) return; // no rotation needed
+	reviewIntervalId = setInterval(() => {
+		reviewIndex = (reviewIndex + 1) % cards.length;
+		const card = cards[reviewIndex];
+		// center the card in the container
+		const left = card.offsetLeft - Math.max(0, (container.clientWidth - card.clientWidth) / 2);
+		container.scrollTo({ left, behavior: 'smooth' });
+	}, 5000);
+}
+
+function stopReviewCarousel(){
+	if(reviewIntervalId) { clearInterval(reviewIntervalId); reviewIntervalId = null; }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -463,21 +652,75 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 });
 
-// Responsive nav toggle
-const navToggle = document.querySelector('.nav-toggle');
-const navLinks = document.getElementById('primary-nav');
-if(navToggle && navLinks){
-	navToggle.addEventListener('click', () => {
-		const open = navLinks.classList.toggle('open');
-		navToggle.classList.toggle('open', open);
-		navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-	});
-	// close nav when link clicked (mobile)
-	navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-		if(navLinks.classList.contains('open')){
-			navLinks.classList.remove('open');
-			navToggle.classList.remove('open');
-			navToggle.setAttribute('aria-expanded','false');
+// Responsive nav: ensure toggles exist and attach per-nav handlers
+document.addEventListener('DOMContentLoaded', () => {
+	function ensureNavToggles(){
+		document.querySelectorAll('.site-nav').forEach(nav => {
+			if(nav.querySelector('.nav-toggle')) return;
+			const btn = document.createElement('button');
+			btn.className = 'nav-toggle';
+			btn.setAttribute('aria-controls', 'primary-nav');
+			btn.setAttribute('aria-expanded', 'false');
+			btn.setAttribute('aria-label', 'Toggle navigation');
+			btn.innerHTML = '<span class="hamburger"></span>';
+			const primary = nav.querySelector('#primary-nav');
+			if(primary) nav.insertBefore(btn, primary);
+			else nav.appendChild(btn);
+		});
+	}
+
+	ensureNavToggles();
+
+	document.querySelectorAll('.nav-toggle').forEach(navToggle => {
+		navToggle.addEventListener('click', function(e){
+			e.stopPropagation();
+			const nav = this.closest('.site-nav') || document;
+			const navLinks = nav.querySelector('#primary-nav') || document.getElementById('primary-nav');
+			if(!navLinks) return;
+			const open = navLinks.classList.toggle('open');
+			this.classList.toggle('open', open);
+			this.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+			// Fallback: force inline display so menu shows even if CSS specificity interferes
+			try{
+				if(open){
+					navLinks.style.display = 'flex';
+					navLinks.style.flexDirection = 'column';
+					navLinks.style.zIndex = '10000';
+				} else {
+					navLinks.style.display = 'none';
+				}
+			}catch(err){ console.error('nav toggle inline style failed', err); }
+
+			console.log('Nav toggle clicked — open:', open, 'navLinks:', navLinks);
+			// focus first link for accessibility
+			const first = navLinks.querySelector('a'); if(open && first) first.focus();
+		});
+
+		// close nav when a link inside is clicked
+		const nav = navToggle.closest('.site-nav') || document;
+		const navLinks = nav.querySelector('#primary-nav') || document.getElementById('primary-nav');
+		if(navLinks){
+			navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+				if(navLinks.classList.contains('open')){
+					navLinks.classList.remove('open');
+					navToggle.classList.remove('open');
+					navToggle.setAttribute('aria-expanded','false');
+				}
+			}));
 		}
-	}));
-}
+	});
+
+	// Close when clicking outside any open nav (capture)
+	document.addEventListener('click', (e) => {
+		document.querySelectorAll('.nav-links.open').forEach(navLinks => {
+			const nav = navLinks.closest('.site-nav') || document;
+			const navToggle = nav.querySelector('.nav-toggle');
+			if(!navLinks.contains(e.target) && !(navToggle && navToggle.contains(e.target))){
+				navLinks.classList.remove('open');
+				if(navToggle) navToggle.classList.remove('open');
+				if(navToggle) navToggle.setAttribute('aria-expanded','false');
+			}
+		});
+	}, true);
+});

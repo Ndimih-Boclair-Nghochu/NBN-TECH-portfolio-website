@@ -15,7 +15,7 @@ Quick local steps
 2. Create local env file `.env` (copy `.env.example`)
    PORT=3000
    SESSION_SECRET=change_this
-   ADMIN_EMAIL=ndimihboclair4@gmail.com
+   ADMIN_EMAIL=nbntechteam@gmail.com
    ADMIN_PASSWORD=@Boclair444
 
 3. Initialize DB and create admin

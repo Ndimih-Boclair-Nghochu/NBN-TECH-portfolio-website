@@ -1,0 +1,8 @@
+DB authenticated
+DB synced
+Server running on port 3000
+DB authenticated
+DB synced
+Server PID: 17552
+Server running on port 3000
+SMTP transporter ready

@@ -14,6 +14,33 @@
 	--shadow-lg:0 12px 32px rgba(0,0,0,0.12);
 }
 
+/* ---- Added: Blog card styling + Stats UI ---- */
+.project, .blog-post{
+	background:var(--card);
+	padding:18px;
+	border-radius:12px;
+	border:1px solid #eef0f2;
+	box-shadow:var(--shadow-md);
+	display:flex;
+	flex-direction:column;
+	gap:12px;
+}
+.project img, .blog-post img{width:100%;height:160px;object-fit:cover;border-radius:8px}
+.project h3, .blog-post h2{margin:0;font-size:1.05rem;color:var(--accent-2)}
+.project .meta, .blog-post .meta{color:var(--muted);font-size:0.9rem}
+.project .project-link, .blog-post .btn{font-weight:700}
+
+/* Stats section */
+.statistics{background:linear-gradient(90deg, rgba(250,250,250,0.6), rgba(245,247,250,0.8));padding:36px 16px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;max-width:var(--max-width);margin:0 auto}
+.stat-card{background:var(--bg);border-radius:12px;padding:18px;border:1px solid #eef0f2;box-shadow:var(--shadow-sm);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.stat-number{font-size:2rem;font-weight:800;color:var(--accent)}
+.stat-label{margin-top:8px;color:var(--muted);font-weight:600}
+
+/* Make blog list use grid when large screens */
+.blog-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+
+
 *{box-sizing:border-box}
 html,body{height:100%;scroll-behavior:smooth}
 body{
@@ -91,6 +118,19 @@ body{
 	display:flex;
 }
 
+/* Strong override: when header is transparent (hero-nav) and the mobile menu opens,
+   ensure the menu background is light and link text is readable. Use !important
+   to override earlier color rules that set white text for hero state. */
+.site-nav.hero-nav .nav-links,
+.site-nav.hero-nav .nav-links.open{
+	background: rgba(255,255,255,0.98) !important;
+}
+
+.site-nav.hero-nav .nav-links a,
+.site-nav.hero-nav .nav-links.open a{
+	color: var(--accent-2) !important;
+}
+
 .nav-links a{
 	color:#ffd700;
 	text-decoration:none;
@@ -147,7 +187,12 @@ body{
 	cursor:pointer;
 	align-items:center;
 	justify-content:center;
+    position:relative;
+    z-index:10001;
 }
+
+/* Remove hamburger completely: hide any toggle buttons and always show nav links on small screens */
+
 
 .nav-toggle .hamburger{
 	width:24px;
@@ -183,6 +228,71 @@ body{
 	transform:rotate(-45deg) translateY(-8px);
 }
 
+/* New responsive, classy hamburger and mobile nav styles */
+@media (max-width:900px){
+	.nav-toggle{
+		display:flex;
+		width:44px;
+		height:44px;
+		padding:8px;
+		border-radius:10px;
+		background:rgba(255,255,255,0.95);
+		border:1px solid rgba(0,0,0,0.06);
+		box-shadow:0 6px 18px rgba(20,30,50,0.06);
+		align-items:center;
+		justify-content:center;
+		cursor:pointer;
+		transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+	}
+
+	.nav-toggle:hover{ transform:translateY(-2px); box-shadow:0 10px 28px rgba(20,30,50,0.08); }
+
+	.nav-toggle .hamburger{ width:20px; height:2px; background:var(--accent-2); }
+	.nav-toggle .hamburger::before, .nav-toggle .hamburger::after{ width:20px; }
+
+	/* mobile nav panel (hidden by default) */
+	/* mobile nav panel (hidden by default)
+	   - Use collapsible panel that expands full-width on small screens
+	   - Use max-height transitions instead of relying on display:none to allow smoother open/close
+	*/
+	.nav-links{
+		display:flex; /* keep flex for layout; visually hidden until opened */
+		position:fixed;
+		top:64px;
+		right:12px; /* anchor to the right side */
+		width:260px; /* fixed side panel width */
+		max-height: calc(100vh - 88px);
+		flex-direction:column;
+		padding:12px;
+		border-radius:12px;
+		background:rgba(255,255,255,0.98);
+		box-shadow:0 12px 40px rgba(0,0,0,0.12);
+		gap:8px;
+		z-index:10000;
+		overflow:auto;
+		opacity:0;
+		transform:translateX(8px) translateY(-6px);
+		pointer-events:none;
+		transition:opacity .22s ease, transform .22s ease;
+	}
+
+	/* when open show the side panel in-place */
+	.nav-links.open{
+		opacity:1;
+		transform:translateX(0) translateY(0);
+		pointer-events:auto;
+	}
+
+	.nav-links a{ display:block; padding:10px 14px; border-radius:8px; background:transparent; color:var(--accent-2); }
+	.nav-links a:hover{ background:rgba(20,110,180,0.06); color:var(--accent); }
+
+	/* Dark variant when header is over hero */
+	.site-nav.hero-nav .nav-toggle{ background:rgba(0,0,0,0.35); border-color:rgba(255,255,255,0.08); }
+	.site-nav.hero-nav .nav-toggle .hamburger, .site-nav.hero-nav .nav-toggle .hamburger::before, .site-nav.hero-nav .nav-toggle .hamburger::after{ background:#fff; }
+	.site-nav.hero-nav .nav-links{ background:rgba(0,0,0,0.6); }
+	.site-nav.hero-nav .nav-links a{ color:#fff; }
+}
+
 /* Hero Section */
 .hero{
 	min-height:72vh;
@@ -192,7 +302,7 @@ body{
 	justify-content:center;
 	text-align:center;
 	padding:100px 16px 60px;
-	background-image:linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600&h=900&fit=crop&auto=format&q=80');
+	background-image:linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1600&h=900&fit=crop&auto=format&q=80');
 	background-size:cover;
 	background-position:center;
 	color:#fff;
@@ -310,6 +420,31 @@ section h2::after{
 	transition:all .2s ease;
 	text-align:left;
 	color:var(--text-light);
+}
+/* Social link styling for footer and pages */
+.site-social{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.site-social.muted{ color:var(--muted); }
+.site-social a{
+	display:inline-flex;
+	align-items:center;
+	gap:8px;
+	padding:8px 10px;
+	background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(245,247,250,0.9));
+	border:1px solid rgba(0,0,0,0.06);
+	border-radius:8px;
+	color:var(--accent-2);
+	text-decoration:none;
+	font-weight:700;
+	font-size:0.95rem;
+	box-shadow:var(--shadow-sm);
+}
+.site-social a:hover{ background:linear-gradient(180deg, rgba(250,250,250,1), rgba(240,245,250,1)); transform:translateY(-2px); box-shadow:var(--shadow-md); color:var(--accent); }
+.site-social a small{ color:var(--muted); font-weight:600; margin-left:4px; }
+
+/* compact variant for small screens */
+@media (max-width:640px){
+	.site-social{ gap:6px; }
+	.site-social a{ padding:6px 8px; font-size:0.9rem; }
 }
 
 .about .highlights li:hover{
@@ -763,6 +898,21 @@ footer .footer-brand{font-weight:800;color:var(--accent-2);margin-bottom:8px}
 footer .footer-links a{display:block;color:var(--text);text-decoration:none;padding:6px 0}
 footer .footer-contact{color:var(--text-light)}
 
+/* Responsive footer: stack columns on smaller screens */
+@media (max-width:900px){
+	footer .footer-inner{flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px}
+	footer .footer-col{min-width:unset;width:100%}
+	footer .footer-links{order:2}
+	footer .footer-links a{display:inline-block;margin:6px 8px}
+	footer .footer-brand{margin-bottom:6px}
+}
+
+@media (max-width:480px){
+	footer{padding:24px 12px}
+	footer .footer-inner{gap:14px}
+	footer .footer-links a{display:block;margin:6px 0}
+}
+
 /* Animations */
 [data-animate]{
 	opacity:0;
@@ -819,6 +969,29 @@ footer .footer-contact{color:var(--text-light)}
 
 	.nav-links.open{
 		display:flex;
+	}
+
+
+
+	/* Ensure nav links are visible when header uses .hero-nav on small/medium screens */
+	.site-nav.hero-nav .nav-links{
+		background:rgba(255,255,255,0.98);
+	}
+
+	.site-nav.hero-nav .nav-links a,
+	.site-nav.hero-nav .nav-links.open a{
+		color:var(--accent-2);
+	}
+
+	/* Ensure mobile nav links are visible when header is transparent (hero-nav)
+	   e.g. white header text over a white mobile menu panel */
+	.site-nav.hero-nav .nav-links{
+		background:rgba(255,255,255,0.98);
+	}
+
+	.site-nav.hero-nav .nav-links a,
+	.site-nav.hero-nav .nav-links.open a{
+		color:var(--accent-2);
 	}
 
 	.hero{
@@ -1376,10 +1549,25 @@ footer .footer-contact{color:var(--text-light)}
 .service-card h3{margin:0 0 8px;color:var(--accent-2)}
 .service-card p{margin:0;color:var(--text-light)}
 
-.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:14px}
-.review-card{background:var(--card);padding:12px;border-radius:8px;border:1px solid #eaeaea;display:flex;flex-direction:column;justify-content:space-between;min-height:120px}
+.reviews-grid{
+	display:flex;
+	gap:18px;
+	margin-top:14px;
+	overflow:hidden;
+	align-items:center;
+	scroll-behavior:smooth;
+}
+.reviews-grid .review-card{background:var(--card);padding:16px;border-radius:14px;border:1px solid #eaeaea;display:flex;flex-direction:column;justify-content:center;align-items:center;flex:0 0 360px;max-width:360px;height:220px;margin:0 auto;overflow:hidden;box-shadow:var(--shadow-md);text-align:center}
 .review-card .quote{font-style:italic;margin:0 0 12px;font-size:0.95rem;color:var(--text)}
 .review-card .quote{display:block;line-height:1.35;max-height:4.2em;overflow:hidden}
+.review-card .meta-row{display:flex;justify-content:center;align-items:center;gap:8px;width:100%}
+.review-card .author{margin:8px 0 0;font-size:0.95rem}
+.review-rating{margin-left:0}
+
+@media (max-width:480px){
+	.reviews-grid .review-card{flex:0 0 92vw;max-width:92vw;height:200px;padding:14px;border-radius:12px}
+	.reviews-grid{padding:8px}
+}
 .review-card .author{font-weight:700;color:var(--muted);margin:8px 0 0;font-size:0.9rem}
 .review-card .meta-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .review-rating{display:inline-flex;gap:4px;margin-left:auto;color:#ffb400}
