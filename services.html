@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Services — Portfolio</title>
+  <title>Services — NBN TECH</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <nav class="site-nav" role="navigation">
     <div class="nav-brand"><h3>NBN TECH</h3></div>
-    <button class="nav-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation"><span class="hamburger"></span></button>
+    <button class="nav-toggle" onclick="toggleNav(event)" aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation"><span class="hamburger"></span></button>
     <div id="primary-nav" class="nav-links">
       <a href="index.html">Home</a>
       <a href="about.html">About</a>
@@ -29,10 +29,10 @@
 
   <div class="page-hero" data-animate style="background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1600&h=900&fit=crop');">
     <img class="hero-bg" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1600&h=900&fit=crop" alt="Team members collaborating">
-    <div class="hero-overlay">
+      <div class="hero-overlay">
       <h1>Services</h1>
       <p>Design, development and cloud services to bring your ideas to production.</p>
-      <a href="#contact" class="btn">Request a quote</a>
+      <a href="contact.html#contact" class="btn">Request a quote</a>
     </div>
   </div>
 
@@ -42,17 +42,18 @@
         <div class="service-card"><h3>Web Development</h3><p>Frontend, backend, and full-stack web development tailored to your needs.</p></div>
         <div class="service-card"><h3>Design & Prototyping</h3><p>UX/UI design, prototyping and design systems to scale your product.</p></div>
         <div class="service-card"><h3>Cloud & DevOps</h3><p>Deployments, CI/CD, and cloud architecture for reliability and scale.</p></div>
+        <div class="service-card"><h3>Online Training</h3><p>Remote workshops, mentoring, and corporate upskilling in web development, cloud, and DevOps.</p></div>
         <div class="service-card"><h3>Performance</h3><p>Performance audits, image optimization and front-end best practices.</p></div>
       </div>
     </section>
   </main>
 
-  <footer>© 2025 Portfolio</footer>
+  <footer>© 2025 NBN TECH</footer>
   <footer>
     <div class="footer-inner">
       <div class="footer-col">
-        <div class="footer-brand">Portfolio</div>
-        <p class="footer-contact">Email: <a href="mailto:email@example.com">email@example.com</a></p>
+        <div class="footer-brand">NBN TECH</div>
+        <p class="footer-contact">Email: <a href="mailto:nbntechteam@gmail.com">nbntechteam@gmail.com</a><br>Phone: <a href="tel:+237652882753">+237 652 882 753</a><br>Location: Bamenda, Cameroon<br>Hours: Active 24/7</p>
       </div>
       <div class="footer-col footer-links">
         <strong>Quick links</strong>
@@ -64,6 +65,10 @@
       <div class="footer-col">
         <strong>About</strong>
         <p class="muted">We help teams ship better products faster — design, build, and operate.</p>
+      </div>
+      <div class="footer-col">
+        <strong>Social</strong>
+        <div class="site-social muted">Loading...</div>
       </div>
     </div>
   </footer>

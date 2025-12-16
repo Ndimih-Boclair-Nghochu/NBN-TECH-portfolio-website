@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Portfolio</title>
+	<title>NBN TECH TEAM</title>
 	<link rel="stylesheet" href="style.css">
 	</head>
 <body>
@@ -11,7 +11,7 @@
 		<div class="nav-brand">
 			<h3>NBN TECH</h3>
 		</div>
-		<button class="nav-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation">
+		<button class="nav-toggle" onclick="toggleNav(event)" aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="hamburger"></span>
 		</button>
 		<div id="primary-nav" class="nav-links">
@@ -30,24 +30,74 @@
 			</a>
 		</div>
 	</nav>
+	<script>
+	// Inline fallback toggle to ensure hamburger works even if external JS fails
+	(function(){
+	  if(window.toggleNav) return; // already provided by script.js
+	  window.toggleNav = function(e){
+	    if(e && e.stopPropagation) e.stopPropagation();
+	    var navToggle = document.querySelector('.nav-toggle');
+	    var navLinks = document.getElementById('primary-nav');
+	    if(!navToggle || !navLinks) return;
+	    var open = navLinks.classList.toggle('open');
+	    navToggle.classList.toggle('open', open);
+	    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+	  };
+
+	  document.addEventListener('click', function(e){
+	    var navLinks = document.getElementById('primary-nav');
+	    var navToggle = document.querySelector('.nav-toggle');
+	    if(!navLinks || !navToggle) return;
+	    if(!navLinks.classList.contains('open')) return;
+	    if(!navLinks.contains(e.target) && !navToggle.contains(e.target)){
+	      navLinks.classList.remove('open');
+	      navToggle.classList.remove('open');
+	      navToggle.setAttribute('aria-expanded','false');
+	    }
+	  }, true);
+	})();
+	</script>
 
 	<div class="hero" data-animate>
-		<h1>Hello, I'm <span>Your Name</span></h1>
-		<p>A passionate Web Developer creating modern & responsive designs.</p>
-		<a href="#portfolio" class="btn">View My Work</a>
+		<h1>Hello, We're <span>NBN TECH TEAM</span></h1>
+		<p>We build systems that never sleeps, Contact us to bring your ideas to reality.</p>
+		<a href="#portfolio" class="btn">View Our Work</a>
 	</div>
 
 	<section id="about" class="about" data-animate>
-		<h2>About Me</h2>
-		<p>I am a front-end developer with experience building accessible, responsive websites and single-page applications. I enjoy turning designs into fast, user-friendly interfaces and learning new tools to improve developer workflows.</p>
+		<h2>About Us</h2>
+		<p>We are a team of passionate Tech professionals, Our main aim is to put in our best to help our customers improve their businesses by building functional systems that makes their businesses standout and easier to manage.</p>
 		<p><strong>Highlights:</strong></p>
 		<ul class="highlights">
-			<li>3+ years building web apps with modern JavaScript frameworks.</li>
+			<li>3+ years building scalable and reliable systems for our clients.</li>
 			<li>Experience with responsive design, performance optimization, and accessibility.</li>
-			<li>Open-source contributor and active learner of new web standards.</li>
-			<li>Deployed production applications to cloud platforms (AWS, S3, Lambda).</li>
-			<li>Strong collaboration with teams using Agile workflows and code review practices.</li>
+			<li>Open-source contributors and active learner of new web and cloud standards.</li>
+			<li>Deployed production applications to cloud platforms (AWS, Azure, GCP).</li>
+			<li>Strong collaboration with active tech teams.</li>
+			<li>We deliver the best in less time.</li>
 		</ul>
+	</section>
+
+	<section id="statistics" class="statistics" data-animate>
+		<h2>Real-time Statistics</h2>
+		<div class="stats-grid">
+			<div class="stat-card">
+				<div class="stat-number" id="stat-projects">—</div>
+				<div class="stat-label">Projects Completed</div>
+			</div>
+			<div class="stat-card">
+				<div class="stat-number" id="stat-blogs">—</div>
+				<div class="stat-label">Blog Posts</div>
+			</div>
+			<div class="stat-card">
+				<div class="stat-number" id="stat-team">—</div>
+				<div class="stat-label">Team Members</div>
+			</div>
+			<div class="stat-card">
+				<div class="stat-number" id="stat-reviews">—</div>
+				<div class="stat-label">Reviews</div>
+			</div>
+		</div>
 	</section>
 
 	<section id="skills" data-animate>
@@ -81,6 +131,7 @@
 		<div class="services-grid">
 			<div class="service-card"><h3>Cloud Computing & DevOps</h3><p>AWS infrastructure, CI/CD pipelines, and deployment automation.</p></div>
 			<div class="service-card"><h3>Web Development</h3><p>Full-stack web applications built with modern frameworks and best practices.</p></div>
+			<div class="service-card"><h3>Online Training</h3><p>Remote workshops, mentoring, and corporate upskilling in web development, cloud, and DevOps.</p></div>
 			<div class="service-card"><h3>Graphic & Logo Designs</h3><p>Professional branding, visual identities, and design assets.</p></div>
 		</div>
 		<div class="section-actions" style="text-align:center;margin-top:18px">
@@ -136,20 +187,9 @@
 
 	<section id="contact" class="contact" data-animate>
 		<h2>Latest Blog Posts</h2>
-		<p>Read the latest articles and updates from my development journey.</p>
-		<div class="blog-list">
-			<article class="blog-post">
-				<h3><a href="blogs.html#post-1">Building Accessible Components</a></h3>
-				<p class="excerpt">Best practices for creating accessible, reusable UI components that work for everyone.</p>
-			</article>
-			<article class="blog-post">
-				<h3><a href="blogs.html#post-2">Optimizing Frontend Performance</a></h3>
-				<p class="excerpt">Tips to improve site speed, reduce bundle size, and deliver better UX.</p>
-			</article>
-			<article class="blog-post">
-				<h3><a href="blogs.html#post-3">Designing a Simple CMS</a></h3>
-				<p class="excerpt">How I built a small admin interface to manage projects and blog posts.</p>
-			</article>
+		<p>Read the latest insights and updates from the NBN TECH engineering team.</p>
+		<div id="blogs-container" class="blog-list">
+			<!-- Blog posts will be fetched from /api/blogs and rendered here by script.js -->
 		</div>
 		<div class="section-actions" style="text-align:center;margin-top:18px">
 			<a class="btn" href="blogs.html">See more blogs</a>
@@ -158,12 +198,12 @@
 
 
 
-	<footer>© 2025 Portfolio</footer>
+	<footer>© 2025 NBN TECH</footer>
 	<footer>
 	  <div class="footer-inner">
 	    <div class="footer-col">
-	      <div class="footer-brand">Portfolio</div>
-	      <p class="footer-contact">Email: <a href="mailto:email@example.com">email@example.com</a><br>Phone: +1 (555) 123-4567</p>
+	      <div class="footer-brand">NBN TECH</div>
+		<p class="footer-contact">Email: <a href="mailto:nbntechteam@gmail.com">nbntechteam@gmail.com</a><br>Phone: <a href="tel:+237652882753">+237 652 882 753</a><br>Location: Bamenda, Cameroon<br>Hours: Active 24/7</p>
 	    </div>
 	    <div class="footer-col footer-links">
 	      <strong>Quick links</strong>
@@ -172,10 +212,14 @@
 	      <a href="blogs.html">Blogs</a>
 	      <a href="contact.html">Contact</a>
 	    </div>
-	    <div class="footer-col">
-	      <strong>About</strong>
-	      <p class="muted">Small engineering team specializing in performant, accessible web apps.</p>
-	    </div>
+			<div class="footer-col">
+						<strong>About</strong>
+				<p class="muted">Small engineering team specializing in performant, accessible web apps.</p>
+			</div>
+			<div class="footer-col">
+				<strong>Join our community</strong>
+				<div class="site-social muted">Loading...</div>
+			</div>
 	  </div>
 	</footer>
 	<script src="script.js"></script>
