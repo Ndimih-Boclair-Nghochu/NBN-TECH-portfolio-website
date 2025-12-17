@@ -1,6 +1,6 @@
 (async ()=>{
   try{
-    const base = 'http://127.0.0.1:3000';
+    const base = process.env.BASE_URL || 'https://dhq9341hf4.execute-api.us-east-1.amazonaws.com';
     const credentials = { email: 'nbntechteam@gmail.com', password: '@Boclair444' };
     console.log('Logging in...');
     let r = await fetch(base + '/api/login', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(credentials) });

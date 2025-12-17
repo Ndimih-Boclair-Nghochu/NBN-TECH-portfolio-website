@@ -15,7 +15,7 @@ const puppeteer = require('puppeteer');
     }catch(e){ console.error('response read error', e); }
   });
 
-  await page.goto('http://127.0.0.1:3000/admin/index.html', { waitUntil: 'networkidle2' });
+  await page.goto(process.env.ADMIN_URL || 'http://127.0.0.1:3000/admin/index.html', { waitUntil: 'networkidle2' });
   await page.waitForSelector('#email');
   // check whether admin app set its load flag
   const adminLoaded = await page.evaluate(() => !!window.__admin_app_loaded);

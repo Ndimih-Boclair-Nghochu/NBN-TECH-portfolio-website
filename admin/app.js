@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const password = (form.querySelector('#password')||{value:''}).value.trim();
     if(!email || !password){ if(msg) msg.textContent = 'Email and password required'; return; }
     try{
-      const res = await fetch('/api/login', {
+      const res = await fetch(API_BASE + '/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   const logout = document.getElementById('logout-btn');
   if(logout){
     logout.addEventListener('click', async ()=>{
-      try{ await fetch('/api/logout', { method: 'POST', credentials: 'include' }); window.location.reload(); }catch(e){ console.error('logout error', e); window.location.reload(); }
+      try{ await fetch(API_BASE + '/api/logout', { method: 'POST', credentials: 'include' }); window.location.reload(); }catch(e){ console.error('logout error', e); window.location.reload(); }
     });
   }
 

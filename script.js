@@ -1,3 +1,4 @@
+const API_BASE = window.API_BASE || '';
 const items = document.querySelectorAll('[data-animate]');
 
 // Reviews carousel state
@@ -138,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		const payload = { name, email, subject, message, createdAt: new Date().toISOString() };
 		try{
-			const res = await fetch('/api/contact', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+			const res = await fetch(API_BASE + '/api/contact', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
 			if(res.ok){ if(statusEl) statusEl.innerHTML = '<strong>Message sent. Thanks!</strong>'; contactForm.reset(); return; }
 			// non-OK: fallback to mailto
 			const mailtoBody = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
@@ -295,7 +296,7 @@ async function fetchTeam(){
 	];
 
 	try {
-		const res = await fetch('/api/team');
+		const res = await fetch(API_BASE + '/api/team');
 		if(!res.ok) throw new Error('Failed to fetch team');
 		const members = await res.json();
 
@@ -365,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Load and render site-level settings (social handle)
 	async function loadSiteSettings(){
 		try{
-			const res = await fetch('/api/settings');
+			const res = await fetch(API_BASE + '/api/settings');
 			if(!res.ok) throw new Error('No settings');
 			const s = await res.json();
 			renderSiteSocial(s);
@@ -415,7 +416,7 @@ function getPlatformIcon(name){
 async function fetchJsonWithFallback(apiPath, fallbackPath){
 	const ALLOW_FALLBACK = false; // set to true only for local dev/testing
 	try{
-		const r = await fetch(apiPath);
+		const r = await fetch(API_BASE + apiPath);
 		if(r && r.ok) return await r.json();
 	}catch(e){ /* network or CORS error */ }
 	if(!ALLOW_FALLBACK) return null;
@@ -448,7 +449,7 @@ async function fetchStats(){
 		// Projects count
 		let projectsCount = 0;
 		try{
-			const resP = await fetch('/api/projects');
+			const resP = await fetch(API_BASE + '/api/projects');
 			if(resP.ok){
 				const items = await resP.json();
 				projectsCount = Array.isArray(items) ? items.length : 0;
@@ -458,21 +459,21 @@ async function fetchStats(){
 		// Blogs count
 		let blogsCount = 0;
 		try{
-			const resB = await fetch('/api/blogs');
+			const resB = await fetch(API_BASE + '/api/blogs');
 			if(resB.ok){ const b = await resB.json(); blogsCount = Array.isArray(b) ? b.length : 0; }
 		}catch(e){ console.warn('blogs count fetch failed', e); }
 
 		// Team count
 		let teamCount = 0;
 		try{
-			const resT = await fetch('/api/team');
+			const resT = await fetch(API_BASE + '/api/team');
 			if(resT.ok){ const t = await resT.json(); teamCount = Array.isArray(t) ? t.length : 0; }
 		}catch(e){ console.warn('team count fetch failed', e); }
 
 		// Reviews count
 		let reviewsCount = 0;
 		try{
-			const resR = await fetch('/api/reviews');
+			const resR = await fetch(API_BASE + '/api/reviews');
 			if(resR.ok){ const r = await resR.json(); reviewsCount = Array.isArray(r) ? r.length : 0; }
 		}catch(e){ console.warn('reviews count fetch failed', e); }
 
@@ -498,7 +499,7 @@ async function loadReviews(){
 	const container = document.getElementById('reviews-container');
 	if(!container) return [];
 	try{
-		const res = await fetch('/api/reviews');
+		const res = await fetch(API_BASE + '/api/reviews');
 		if(res.ok){
 			const data = await res.json();
 			return data;
@@ -595,7 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			if(!text){ alert('Please enter a review'); return; }
 			// Try to POST to server; if it fails, save locally
 			try{
-				const res = await fetch('/api/reviews', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ author, role, text, rating }) });
+				const res = await fetch(API_BASE + '/api/reviews', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ author, role, text, rating }) });
 				if(res.ok){
 					// refresh from server
 					await renderReviews();

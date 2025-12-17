@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 
 (async ()=>{
-  const url = 'http://127.0.0.1:3000/admin/index.html';
+  const url = process.env.ADMIN_URL || 'http://127.0.0.1:3000/admin/index.html';
   const email = 'nbntechteam@gmail.com';
   const password = '@Boclair444';
   console.log('Starting headless browser...');

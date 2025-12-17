@@ -1,5 +1,5 @@
 const http = require('http');
-http.get('http://127.0.0.1:3000/', (res)=>{
+http.get(process.env.BASE_URL || 'http://127.0.0.1:3000/', (res)=>{
   console.log('STATUS', res.statusCode);
   res.setEncoding('utf8');
   let body='';
