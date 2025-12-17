@@ -1,5 +1,38 @@
 const API_BASE = window.API_BASE || '';
-const items = document.querySelectorAll('[data-animate]');
+
+// Animation helper: initialize observers or fall back to scroll-based checks
+const ANIMATE_SELECTOR = '[data-animate]';
+function throttle(fn, wait){ let last = 0; return (...args) => { const now = Date.now(); if(now - last > wait){ last = now; fn(...args); } }; }
+
+function initAnimations(){
+    const items = document.querySelectorAll(ANIMATE_SELECTOR);
+    if(!items || items.length === 0) return;
+
+    if('IntersectionObserver' in window){
+        const io = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting){
+                    entry.target.classList.add('active');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { root: null, rootMargin: '0px 0px -100px 0px', threshold: 0.1 });
+        items.forEach(i => io.observe(i));
+    } else {
+        function fallback(){
+            items.forEach(i => {
+                if(i.getBoundingClientRect().top < window.innerHeight - 100) i.classList.add('active');
+            });
+        }
+        window.addEventListener('scroll', throttle(fallback, 200));
+        // run once immediately
+        fallback();
+    }
+}
+
+// start animations on DOM ready
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initAnimations);
+else initAnimations();
 
 // Reviews carousel state
 let reviewIntervalId = null;
