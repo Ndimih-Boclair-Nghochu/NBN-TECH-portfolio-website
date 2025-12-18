@@ -72,7 +72,7 @@ const puppeteer = require('puppeteer');
     console.log('Settings status text:', status);
 
     // read final settings from API to confirm
-    const resp = await page.evaluate(async ()=>{ const r = await fetch('/api/settings'); if(!r.ok) return null; return r.json(); });
+    const resp = await page.evaluate(async ()=>{ const base = window.API_BASE || ''; const r = await fetch(base + '/api/settings'); if(!r.ok) return null; return r.json(); });
     console.log('Settings from API after save:', JSON.stringify(resp));
 
     // cleanup: remove test platform by submitting form without it

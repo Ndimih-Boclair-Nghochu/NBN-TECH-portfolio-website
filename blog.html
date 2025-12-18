@@ -35,13 +35,14 @@
   </main>
 
   <script>
+  const API_BASE = window.API_BASE || '';
   function qs(name){ const u = new URLSearchParams(window.location.search); return u.get(name); }
   async function loadPost(){
     const container = document.getElementById('post');
     const id = qs('id');
     if(!id){ container.innerHTML = '<p class="muted">No post specified.</p>'; return; }
     try{
-      const res = await fetch('/api/blogs');
+      const res = await fetch(API_BASE + '/api/blogs');
       if(!res.ok) throw new Error('Failed to fetch posts');
       const posts = await res.json();
       const p = posts.find(x => String(x.id) === String(id));

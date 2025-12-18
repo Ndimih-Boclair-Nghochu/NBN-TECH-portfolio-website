@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 // --- Projects CRUD implementation ---
 const API_BASE = window.API_BASE || '';
+function resolveApiUrl(pathOrUrl){ return (typeof pathOrUrl === 'string' && pathOrUrl.startsWith('/api')) ? (API_BASE + pathOrUrl) : pathOrUrl; }
 
 async function api(path, options = {}){
   const res = await fetch(API_BASE + path, { credentials: 'include', ...options });
@@ -153,7 +154,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       const url = id ? '/api/projects/' + id : '/api/projects';
       const method = id ? 'PUT' : 'POST';
       try{
-        const res = await fetch(url, { method, credentials: 'include', body: fd });
+        const res = await fetch(resolveApiUrl(url), { method, credentials: 'include', body: fd });
         if(!res.ok) { const t = await res.text().catch(()=>null); throw new Error(t || 'Save failed'); }
         projectForm.reset();
         await loadProjects();
@@ -239,7 +240,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       const url = id ? '/api/blogs/' + id : '/api/blogs';
       const method = id ? 'PUT' : 'POST';
       try{
-        const res = await fetch(url, { method, credentials: 'include', body: fd });
+        const res = await fetch(resolveApiUrl(url), { method, credentials: 'include', body: fd });
         if(!res.ok) { const t = await res.text().catch(()=>null); throw new Error(t || 'Save failed'); }
         blogForm.reset();
         await loadBlogs();
@@ -281,7 +282,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   document.addEventListener('DOMContentLoaded', ()=>{
     const form = document.getElementById('service-form'); const list = document.getElementById('services-list');
-    if(form){ form.addEventListener('submit', async (e)=>{ e.preventDefault(); const fd = new FormData(form); const id = fd.get('id'); const url = id?'/api/services/'+id:'/api/services'; const method = id?'PUT':'POST'; try{ const res = await fetch(url,{ method, credentials:'include', body: fd }); if(!res.ok){ const t = await res.text().catch(()=>null); throw new Error(t||'Save failed'); } form.reset(); await loadServices(); }catch(err){ console.error('service save error', err); alert('Save failed: '+(err.message||'')); } }); }
+    if(form){ form.addEventListener('submit', async (e)=>{ e.preventDefault(); const fd = new FormData(form); const id = fd.get('id'); const url = id?'/api/services/'+id:'/api/services'; const method = id?'PUT':'POST'; try{ const res = await fetch(resolveApiUrl(url), { method, credentials:'include', body: fd }); if(!res.ok){ const t = await res.text().catch(()=>null); throw new Error(t||'Save failed'); } form.reset(); await loadServices(); }catch(err){ console.error('service save error', err); alert('Save failed: '+(err.message||'')); } }); }
     if(list){ list.addEventListener('click', async (e)=>{ const btn = e.target.closest('button'); if(!btn) return; const id = btn.dataset.id; if(btn.classList.contains('edit')) await editService(id); else if(btn.classList.contains('delete')) await deleteService(id); }); }
     (async ()=>{ try{ const probe = await fetch(API_BASE + '/api/services',{ credentials:'include' }); if(probe && probe.ok) await loadServices(); }catch(e){} })();
   });
@@ -293,7 +294,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   document.addEventListener('DOMContentLoaded', ()=>{
     const form = document.getElementById('skill-form'); const list = document.getElementById('skills-list');
-    if(form){ form.addEventListener('submit', async (e)=>{ e.preventDefault(); const fd = new FormData(form); const id = fd.get('id'); const payload = { name: fd.get('name'), level: fd.get('level'), order: fd.get('order') }; const url = id?'/api/skills/'+id:'/api/skills'; const method = id?'PUT':'POST'; try{ const res = await fetch(url, { method, credentials:'include', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(payload) }); if(!res.ok){ const t = await res.text().catch(()=>null); throw new Error(t||'Save failed'); } form.reset(); await loadSkills(); }catch(err){ console.error('skill save error', err); alert('Save failed: '+(err.message||'')); } }); }
+    if(form){ form.addEventListener('submit', async (e)=>{ e.preventDefault(); const fd = new FormData(form); const id = fd.get('id'); const payload = { name: fd.get('name'), level: fd.get('level'), order: fd.get('order') }; const url = id?'/api/skills/'+id:'/api/skills'; const method = id?'PUT':'POST'; try{ const res = await fetch(resolveApiUrl(url), { method, credentials:'include', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(payload) }); if(!res.ok){ const t = await res.text().catch(()=>null); throw new Error(t||'Save failed'); } form.reset(); await loadSkills(); }catch(err){ console.error('skill save error', err); alert('Save failed: '+(err.message||'')); } }); }
     if(list){ list.addEventListener('click', async (e)=>{ const btn = e.target.closest('button'); if(!btn) return; const id = btn.dataset.id; if(btn.classList.contains('delete')) await deleteSkill(id); }); }
     (async ()=>{ try{ const probe = await fetch(API_BASE + '/api/skills',{ credentials:'include' }); if(probe && probe.ok) await loadSkills(); }catch(e){} })();
   });
@@ -307,7 +308,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   document.addEventListener('DOMContentLoaded', ()=>{
     const form = document.getElementById('team-form'); const list = document.getElementById('team-list');
-    if(form){ form.addEventListener('submit', async (e)=>{ e.preventDefault(); const fd = new FormData(form); const id = fd.get('id'); const url = id?'/api/team/'+id:'/api/team'; const method = id?'PUT':'POST'; try{ const res = await fetch(url, { method, credentials:'include', body: fd }); if(!res.ok){ const t = await res.text().catch(()=>null); throw new Error(t||'Save failed'); } form.reset(); await loadTeam(); }catch(err){ console.error('team save error', err); alert('Save failed: '+(err.message||'')); } }); }
+    if(form){ form.addEventListener('submit', async (e)=>{ e.preventDefault(); const fd = new FormData(form); const id = fd.get('id'); const url = id?'/api/team/'+id:'/api/team'; const method = id?'PUT':'POST'; try{ const res = await fetch(resolveApiUrl(url), { method, credentials:'include', body: fd }); if(!res.ok){ const t = await res.text().catch(()=>null); throw new Error(t||'Save failed'); } form.reset(); await loadTeam(); }catch(err){ console.error('team save error', err); alert('Save failed: '+(err.message||'')); } }); }
     if(list){ list.addEventListener('click', async (e)=>{ const btn = e.target.closest('button'); if(!btn) return; const id = btn.dataset.id; if(btn.classList.contains('edit')) await editTeam(id); else if(btn.classList.contains('delete')) await deleteTeam(id); }); }
     (async ()=>{ try{ const probe = await fetch(API_BASE + '/api/team',{ credentials:'include' }); if(probe && probe.ok) await loadTeam(); }catch(e){} })();
   });
@@ -392,7 +393,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
             url: fd.get('url'),
             platforms: Array.from(platformsList.querySelectorAll('li span')).map(s=>s.textContent)
           };
-          const res = await fetch('/api/settings', { method:'PUT', credentials:'include', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
+          const res = await fetch(API_BASE + '/api/settings', { method:'PUT', credentials:'include', headers: { 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
           if(!res.ok){ const t = await res.text().catch(()=>null); throw new Error(t||'Save failed'); }
           // success
           if(status){ status.textContent = 'Saved'; status.classList.add('success'); }
