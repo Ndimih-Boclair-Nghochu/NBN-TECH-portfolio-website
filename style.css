@@ -131,6 +131,11 @@ body{
 	color: var(--accent-2) !important;
 }
 
+/* Ensure brand/logo color is never white even in hero-transparent header */
+.site-nav.hero-nav .nav-brand h3{
+	color: #ffd700 !important;
+}
+
 .nav-links a{
 	color:#ffd700;
 	text-decoration:none;

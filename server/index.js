@@ -70,7 +70,7 @@ async function maybeUploadFileToS3(localPath){
 // Configure mailer (optional). Provide SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, CONTACT_TO in .env
 let mailer = null;
 // default contact destination when not provided in env
-const CONTACT_TO = process.env.CONTACT_TO || 'nbntechteam@gmail.com';
+const CONTACT_TO = process.env.CONTACT_TO || 'contact@nbntech.com';
 if(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS){
   try{
     mailer = nodemailer.createTransport({

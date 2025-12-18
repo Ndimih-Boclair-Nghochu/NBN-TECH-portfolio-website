@@ -2,8 +2,8 @@ const puppeteer = require('puppeteer');
 
 (async ()=>{
   const url = process.env.ADMIN_URL || 'http://127.0.0.1:3000/admin/index.html';
-  const email = 'nbntechteam@gmail.com';
-  const password = '@Boclair444';
+  const email = process.env.ADMIN_EMAIL || '';
+  const password = process.env.ADMIN_PASSWORD || '';
   console.log('Headless settings UI test starting...');
   const browser = await puppeteer.launch({ args: ['--no-sandbox','--disable-setuid-sandbox'] });
   const page = await browser.newPage();

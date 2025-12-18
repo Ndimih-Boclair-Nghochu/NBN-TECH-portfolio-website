@@ -184,26 +184,16 @@ document.addEventListener('DOMContentLoaded', () => {
 		try{
 			const res = await fetch(API_BASE + '/api/contact', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
 			if(res.ok){ if(statusEl) statusEl.innerHTML = '<strong>Message sent. Thanks!</strong>'; contactForm.reset(); return; }
-				// non-OK: service returned an error — show user-friendly message, save locally, and offer a manual fallback (do NOT open mail client automatically)
-				if(statusEl) statusEl.innerHTML = '<strong>Service currently unavailable.</strong> Your message has been saved locally; you can retry or send via email manually.';
+				// non-OK: service returned an error — show user-friendly message, save locally, then fallback to mailto
+				if(statusEl) statusEl.innerHTML = '<strong>Service unavailable — opening your email client as a fallback.</strong>';
 				try{
 					const stored = JSON.parse(localStorage.getItem('contact_messages')||'[]');
 					stored.unshift(payload);
 					localStorage.setItem('contact_messages', JSON.stringify(stored));
 				}catch(e){ /* ignore */ }
-				// Add a small action button for manual email (user choice)
-				if(statusEl){
-					const btn = document.createElement('button');
-					btn.className = 'btn small';
-					btn.textContent = 'Open email client';
-					btn.addEventListener('click', () => {
-						const mailtoBody = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
-						const mailto = `mailto:contact@nbntech.com?subject=${encodeURIComponent(subject||'Contact from website')}&body=${mailtoBody}`;
-						window.location.href = mailto;
-					});
-					statusEl.appendChild(document.createTextNode(' '));
-					statusEl.appendChild(btn);
-				}
+				const mailtoBody = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
+				const mailto = `mailto:nbntechteam@gmail.com?subject=${encodeURIComponent(subject||'Contact from website')}&body=${mailtoBody}`;
+				window.location.href = mailto;
 		}catch(err){
 			console.error('Contact send error', err);
 			// store locally and open mail client as fallback
