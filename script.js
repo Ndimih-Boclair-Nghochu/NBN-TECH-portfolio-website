@@ -59,32 +59,42 @@ window.toggleNav = toggleNav;
 
 // Ensure `.nav-toggle` uses event listener (more reliable than inline onclick across contexts)
 document.addEventListener('DOMContentLoaded', () => {
-	const navToggle = document.querySelector('.nav-toggle');
-	if(navToggle) navToggle.addEventListener('click', (e) => {
-		// pass through the event and element
-		toggleNav(e);
-	});
+	const navToggles = document.querySelectorAll('.nav-toggle');
+	if(navToggles && navToggles.length){
+		navToggles.forEach(navToggle => {
+			navToggle.addEventListener('click', (e) => {
+				// pass through the event and element
+				toggleNav(e);
+			});
+		});
+	}
 
 	// Close mobile menu when resizing back to desktop widths
 	window.addEventListener('resize', () => {
 		try{
 			if(window.innerWidth > 900){
 				const navLinks = document.getElementById('primary-nav');
-				const navT = document.querySelector('.nav-toggle');
+				const navTList = document.querySelectorAll('.nav-toggle');
 				if(navLinks && navLinks.classList.contains('open')) navLinks.classList.remove('open');
-				if(navT && navT.classList.contains('open')){ navT.classList.remove('open'); navT.setAttribute('aria-expanded','false'); }
+				if(navTList && navTList.length){
+					navTList.forEach(navT => {
+						if(navT && navT.classList.contains('open')){ navT.classList.remove('open'); navT.setAttribute('aria-expanded','false'); }
+					});
+				}
 			}
 		}catch(e){ /* ignore */ }
 	});
 });
 
 function onScroll(){
+	const items = document.querySelectorAll(ANIMATE_SELECTOR);
+	if(!items || items.length === 0) return;
 	items.forEach(i => {
 		if(i.getBoundingClientRect().top < window.innerHeight - 100) i.classList.add('active');
 	});
 }
 
-window.addEventListener('scroll', onScroll);
+window.addEventListener('scroll', throttle(onScroll, 200));
 onScroll();
 
 // Header transparency over hero on contact page
@@ -174,10 +184,16 @@ document.addEventListener('DOMContentLoaded', () => {
 		try{
 			const res = await fetch(API_BASE + '/api/contact', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
 			if(res.ok){ if(statusEl) statusEl.innerHTML = '<strong>Message sent. Thanks!</strong>'; contactForm.reset(); return; }
-			// non-OK: fallback to mailto
-			const mailtoBody = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
-			const mailto = `mailto:nbntechteam@gmail.com?subject=${encodeURIComponent(subject||'Contact from website')}&body=${mailtoBody}`;
-			window.location.href = mailto; if(statusEl) statusEl.textContent = 'Opened your email client as a fallback.';
+				// non-OK: service returned an error — show user-friendly message, save locally, then fallback to mailto
+				if(statusEl) statusEl.innerHTML = '<strong>Service unavailable — opening your email client as a fallback.</strong>';
+				try{
+					const stored = JSON.parse(localStorage.getItem('contact_messages')||'[]');
+					stored.unshift(payload);
+					localStorage.setItem('contact_messages', JSON.stringify(stored));
+				}catch(e){ /* ignore */ }
+				const mailtoBody = encodeURIComponent(`${message}\n\n— ${name} (${email})`);
+				const mailto = `mailto:nbntechteam@gmail.com?subject=${encodeURIComponent(subject||'Contact from website')}&body=${mailtoBody}`;
+				window.location.href = mailto;
 		}catch(err){
 			console.error('Contact send error', err);
 			// store locally and open mail client as fallback
