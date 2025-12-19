@@ -79,4 +79,12 @@ Security notes
 - Do not commit credentials to the repository. Use GitHub repository secrets or attach an IAM role to your runner instance.
 - Rotate or revoke credentials immediately if exposed.
 
-If you want, I can add a sample GitHub Actions secret-setup checklist or a `deploy.ps1` (Windows) variant. Which would you prefer?
+Cross-origin & session notes (admin login issues)
+- If your frontend is served from S3/CloudFront (different origin) and your backend is on a separate origin, you must set `BACKEND_URL` (GitHub Action secret) so the CI will rewrite `window.API_BASE` to the backend origin during deploy.
+- For cookie-based admin sessions to work across origins, set these server env vars on the backend host (and use HTTPS):
+  - `CORS_ORIGIN` — set to your frontend origin (e.g., `https://dlfji1tg4589l.cloudfront.net`)
+  - `SESSION_COOKIE_SAMESITE=none` and `SESSION_COOKIE_SECURE=true` — required when `window.API_BASE` points to a different origin so browsers accept cross-site cookies.
+  - Optionally set `SESSION_COOKIE_DOMAIN` if you need a specific cookie domain.
+- The server now logs session cookie configuration and basic API requests to help debugging.
+
+If you want, I can add a small health-check step to the workflow that calls `/api/health` and a smoke test that attempts an admin login in a headless step. Which would you prefer?

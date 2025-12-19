@@ -24,14 +24,20 @@ app.use(cors(allowedOrigin ? { origin: allowedOrigin, credentials: true } : { or
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Session cookie configuration (tune via env vars)
+const cookieSecure = (process.env.SESSION_COOKIE_SECURE === 'true') || (process.env.NODE_ENV === 'production');
+const cookieSameSite = process.env.SESSION_COOKIE_SAMESITE || 'lax'; // set to 'none' when front-end and backend are cross-site (requires HTTPS)
+const cookieDomain = process.env.SESSION_COOKIE_DOMAIN || undefined;
+
 app.use(session({
   store: new SQLiteStore({ db: 'sessions.sqlite', dir: path.join(__dirname, 'data') }),
   secret: process.env.SESSION_SECRET || 'change_this_session_secret',
   resave: false,
   saveUninitialized: false,
-  // allow overriding secure cookie behavior via env var (useful for HTTPS behind load balancers)
-  cookie: { secure: (process.env.SESSION_COOKIE_SECURE === 'true') || (process.env.NODE_ENV === 'production') }
+  cookie: { secure: cookieSecure, sameSite: cookieSameSite, domain: cookieDomain }
 }));
+
+console.log('Session cookie config:', { secure: cookieSecure, sameSite: cookieSameSite, domain: cookieDomain });
 
 // Ensure upload directory exists
 const uploadDir = path.join(__dirname, '..', 'uploads');
@@ -104,6 +110,12 @@ function checkContactRateLimit(ip) {
 
 // Serve admin & frontend static files
 app.use('/', express.static(path.join(__dirname, '..')));
+
+// Helpful request logging for debugging admin/api issues
+app.use('/api', (req, res, next) => {
+  try{ console.log(`[API] ${req.method} ${req.originalUrl} from ${req.ip}`); }catch(e){}
+  next();
+});
 
 // Auth endpoints
 app.post('/api/login', async (req, res) => {
