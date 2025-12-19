@@ -53,6 +53,8 @@ function toggleNav(e){
 	var open = navLinks.classList.toggle('open');
 	navToggle.classList.toggle('open', open);
 	navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+	// lock body scroll when mobile nav opens
+	document.body.classList.toggle('no-scroll', !!open);
 	console.debug('toggleNav called — open:', open);
 }
 window.toggleNav = toggleNav;
@@ -81,6 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
 						if(navT && navT.classList.contains('open')){ navT.classList.remove('open'); navT.setAttribute('aria-expanded','false'); }
 					});
 				}
+				// ensure body scroll is restored
+				document.body.classList.remove('no-scroll');
 			}
 		}catch(e){ /* ignore */ }
 	});

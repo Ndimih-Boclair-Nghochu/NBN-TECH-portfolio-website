@@ -264,8 +264,10 @@ body{
 		display:flex; /* keep flex for layout; visually hidden until opened */
 		position:fixed;
 		top:64px;
-		right:12px; /* anchor to the right side */
-		width:260px; /* fixed side panel width */
+		left:12px;
+		right:12px;
+		width:auto;
+		max-width:420px;
 		max-height: calc(100vh - 88px);
 		flex-direction:column;
 		padding:12px;
@@ -279,7 +281,7 @@ body{
 		transform:translateX(8px) translateY(-6px);
 		pointer-events:none;
 		transition:opacity .22s ease, transform .22s ease;
-	}
+	} 
 
 	/* when open show the side panel in-place */
 	.nav-links.open{
@@ -300,18 +302,18 @@ body{
 
 /* Hero Section */
 .hero{
-	min-height:72vh;
+	min-height:64vh;
 	display:flex;
 	flex-direction:column;
 	align-items:center;
 	justify-content:center;
 	text-align:center;
-	padding:100px 16px 60px;
-	background-image:linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1600&h=900&fit=crop&auto=format&q=80');
+	padding:90px 16px 48px;
+	background-image:linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1521790367033-1b24042c0e20?w=1600&h=900&fit=crop&q=80');
 	background-size:cover;
 	background-position:center;
 	color:#fff;
-}
+} 
 
 .hero h1{
 	font-size:2.5rem;
@@ -929,6 +931,41 @@ footer .footer-contact{color:var(--text-light)}
 	opacity:1;
 	transform:translateY(0);
 }
+
+/* Stagger child reveals for sections that have many items */
+[data-animate] > *{
+	opacity:0;
+	transform:translateY(18px);
+	transition:opacity .6s ease, transform .6s ease;
+}
+[data-animate].active > *{
+	opacity:1;
+	transform:none;
+}
+[data-animate].active > *:nth-child(1){transition-delay:0s}
+[data-animate].active > *:nth-child(2){transition-delay:0.06s}
+[data-animate].active > *:nth-child(3){transition-delay:0.12s}
+[data-animate].active > *:nth-child(4){transition-delay:0.18s}
+[data-animate].active > *:nth-child(5){transition-delay:0.24s}
+[data-animate].active > *:nth-child(6){transition-delay:0.30s}
+[data-animate].active > *:nth-child(7){transition-delay:0.36s}
+[data-animate].active > *:nth-child(8){transition-delay:0.42s}
+
+/* Utility: prevent body scroll when mobile nav is open */
+.no-scroll{overflow:hidden}
+
+/* Responsive tweaks for hero */
+@media (max-width:900px){
+	.hero{padding:60px 16px 40px; min-height:56vh}
+	.hero h1{font-size:2rem}
+	.hero p{font-size:1rem; max-width:520px}
+}
+@media (max-width:480px){
+	.hero{padding:44px 12px 30px; min-height:48vh}
+	.hero h1{font-size:1.6rem}
+	.hero p{font-size:0.95rem; max-width:360px}
+	.nav-links{left:12px; right:12px; width:auto}
+} 
 
 /* Mobile First - Extra Small Devices (320px) */
 @media (max-width:480px){
