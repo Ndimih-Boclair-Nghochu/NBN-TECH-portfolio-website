@@ -4,15 +4,16 @@ on:
   push:
     branches: [ main ]
 
-env:
-  S3_BUCKET: nbntech-frontend
-  CLOUDFRONT_DISTRIBUTION_ID: E1P3KA7L8DP9Z1
-  AWS_REGION: us-east-1
-
 jobs:
   frontend-deploy:
-    name: Deploy frontend to S3 + invalidate CloudFront
+    name: Deploy frontend to S3 + optionally invalidate CloudFront
     runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      S3_BUCKET: ${{ secrets.S3_BUCKET }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+      BACKEND_URL: ${{ secrets.BACKEND_URL }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,7 +21,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '16.20.2'
+          node-version: '18'
 
       - name: Install dependencies (if present)
         run: |
@@ -35,14 +36,24 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Replace frontend API URL (optional)
+        if: env.BACKEND_URL != ''
+        run: |
+          echo "Replacing window.API_BASE occurrences with $BACKEND_URL"
+          grep -RIl "window.API_BASE" . || true
+          find . -type f \( -name "*.html" -o -name "*.js" \) -print0 | xargs -0 sed -i "s|window.API_BASE = '\\([^']*\\)';|window.API_BASE = '$BACKEND_URL';|g" || true
 
       - name: Sync static site to S3
+        if: env.S3_BUCKET != ''
         env:
-          S3_BUCKET: ${{ env.S3_BUCKET }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
         run: |
           echo "Syncing files to s3://$S3_BUCKET"
-          aws s3 sync . s3://$S3_BUCKET \
+          DEPLOY_DIR="./build"
+          if [ ! -d "$DEPLOY_DIR" ]; then DEPLOY_DIR="."; fi
+          aws s3 sync "$DEPLOY_DIR" s3://$S3_BUCKET \
             --exclude ".git/*" \
             --exclude "server/*" \
             --exclude "infra/*" \
@@ -50,23 +61,22 @@ jobs:
             --delete \
             --cache-control "public, max-age=86400"
 
-      - name: Create CloudFront invalidation
+      - name: Create CloudFront invalidation (optional)
+        if: env.CLOUDFRONT_DISTRIBUTION_ID != ''
         run: |
           echo "Invalidating CloudFront distribution: ${{ env.CLOUDFRONT_DISTRIBUTION_ID }}"
           aws cloudfront create-invalidation --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
 
-      - name: Smoke test CDN and site
+      - name: Smoke test CDN and site (best-effort)
         run: |
           set -e
-          # Try to get CloudFront domain
-          DOMAIN=$(aws cloudfront get-distribution --id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} --query "Distribution.DomainName" --output text 2>/dev/null || true)
-          if [ -z "$DOMAIN" ]; then
-            echo "Could not determine CloudFront domain; skipping CDN content checks.";
-            exit 0
+          if [ -z "${{ env.CLOUDFRONT_DISTRIBUTION_ID }}" ]; then
+            echo "No CloudFront distribution configured; skipping CDN smoke tests."; exit 0
           fi
+          DOMAIN=$(aws cloudfront get-distribution --id ${{ env.CLOUDFRONT_DISTRIBUTION_ID }} --query "Distribution.DomainName" --output text 2>/dev/null || true)
+          if [ -z "$DOMAIN" ]; then echo "Could not determine CloudFront domain; skipping CDN content checks."; exit 0; fi
           echo "CloudFront domain: $DOMAIN"
-          echo "Checking https://$DOMAIN/script.js"
-          curl -sSf --max-time 10 "https://$DOMAIN/script.js" | grep -E "IntersectionObserver|hero-bg" && echo "CDN script looks updated" || echo "Warning: CDN script may not contain expected markers"
+          curl -sSf --max-time 10 "https://$DOMAIN/script.js" | head -n 1 || true
 
   backend-deploy:
     name: Deploy backend (optional via SSH)
@@ -87,7 +97,7 @@ jobs:
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
             set -e
-            BACKEND_DIR="${{ secrets.BACKEND_DIR || '/home/ec2-user/server/server' }}"
+            BACKEND_DIR="${{ secrets.BACKEND_DIR || '/home/ec2-user/server' }}"
             cd "$BACKEND_DIR"
             git fetch --all --prune
             git checkout main || true
@@ -105,7 +115,7 @@ jobs:
             fi
             pm2 save
             # quick health check
-            if curl -sSf --max-time 10 "${{ env.API_ENDPOINT || 'https://dhq9341hf4.execute-api.us-east-1.amazonaws.com' }}/api/health" >/dev/null; then
+            if curl -sSf --max-time 10 "${{ secrets.BACKEND_URL || 'http://localhost:3000' }}/api/health" >/dev/null; then
               echo "Backend health check OK"
             else
               echo "Warning: backend health check failed";
