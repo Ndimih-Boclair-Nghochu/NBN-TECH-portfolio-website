@@ -89,34 +89,42 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Deploy to EC2 via SSH
+      - name: Deploy to EC2 via SSH (run remote setup + smoke tests)
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
-            set -e
-            BACKEND_DIR="${{ secrets.BACKEND_DIR || '/home/ec2-user/server' }}"
+            set -euo pipefail
+            BACKEND_DIR="${{ secrets.BACKEND_DIR || '/home/ec2-user/portfolio_template' }}"
+            echo "Deploying to $BACKEND_DIR"
             cd "$BACKEND_DIR"
             git fetch --all --prune
-            git checkout main || true
             git reset --hard origin/main
-            if [ -f package-lock.json ]; then
-              npm ci --no-audit --no-fund
-            else
-              npm install --no-audit --no-fund
-            fi
-            PM2_NAME="nbn-backend"
-            if pm2 describe "$PM2_NAME" >/dev/null 2>&1; then
-              pm2 restart "$PM2_NAME"
-            else
-              pm2 start npm --name "$PM2_NAME" -- start
-            fi
-            pm2 save
-            # quick health check
-            if curl -sSf --max-time 10 "${{ secrets.BACKEND_URL || 'http://localhost:3000' }}/api/health" >/dev/null; then
-              echo "Backend health check OK"
-            else
-              echo "Warning: backend health check failed";
+
+            # Write server .env from secrets (do not echo secrets)
+            cat > server/.env <<'EOF'
+PORT=3000
+SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+SESSION_COOKIE_SAMESITE=${{ secrets.SESSION_COOKIE_SAMESITE }}
+SESSION_COOKIE_SECURE=${{ secrets.SESSION_COOKIE_SECURE }}
+CORS_ORIGIN=${{ secrets.CORS_ORIGIN }}
+ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}
+ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
+EOF
+
+            # Ensure scripts are executable
+            chmod +x scripts/remote_setup.sh scripts/check_site.sh || true
+
+            # Run remote setup (installs deps and restarts server)
+            ADMIN_EMAIL="${{ secrets.ADMIN_EMAIL }}" ADMIN_PASSWORD="${{ secrets.ADMIN_PASSWORD }}" \
+              CORS_ORIGIN="${{ secrets.CORS_ORIGIN }}" \
+              SESSION_COOKIE_SAMESITE="${{ secrets.SESSION_COOKIE_SAMESITE }}" \
+              SESSION_COOKIE_SECURE="${{ secrets.SESSION_COOKIE_SECURE }}" \
+              ./scripts/remote_setup.sh
+
+            # Run smoke tests against CloudFront URL
+            ADMIN_EMAIL="${{ secrets.ADMIN_EMAIL }}" ADMIN_PASSWORD="${{ secrets.ADMIN_PASSWORD }}" ./scripts/check_site.sh https://dlfji1tg4589l.cloudfront.net
+
             fi

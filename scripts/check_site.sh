@@ -29,6 +29,7 @@ echo -n "GET /api/reviews... "
 if curl -sSf --max-time 10 "$API_BASE/api/reviews" | jq -r '. | length' >/dev/null 2>&1; then echo "OK"; else echo "FAIL"; fi
 
 # 5) optional admin login test (requires ADMIN_EMAIL and ADMIN_PASSWORD env vars)
+EXIT_CODE=0
 if [ -n "${ADMIN_EMAIL:-}" ] && [ -n "${ADMIN_PASSWORD:-}" ]; then
   echo -n "Admin login (cookie) ... "
   TMPCOOKIE=$(mktemp)
@@ -39,15 +40,20 @@ if [ -n "${ADMIN_EMAIL:-}" ] && [ -n "${ADMIN_PASSWORD:-}" ]; then
       echo "OK (cookie set)"
       # try an authenticated request using cookie jar
       AUTH_TEST=$(curl -s -b $TMPCOOKIE -X GET "$API_BASE/api/projects" -H 'Accept: application/json' || true)
-      if [ -n "$AUTH_TEST" ]; then echo "Auth GET /api/projects OK"; else echo "Auth GET failed"; fi
+      if [ -n "$AUTH_TEST" ]; then echo "Auth GET /api/projects OK"; else echo "Auth GET failed"; EXIT_CODE=1; fi
     else
-      echo "Login succeeded but no session cookie present (check SameSite/secure and CORS)"
+      echo "Login succeeded but no session cookie present (check SameSite/secure and CORS)"; EXIT_CODE=1
     fi
   else
-    echo "Login failed, status=$LOGIN_RES"
-    echo "Response body:"; cat /tmp/login_res.txt
+    echo "Login failed, status=$LOGIN_RES"; echo "Response body:"; cat /tmp/login_res.txt; EXIT_CODE=1
   fi
   rm -f $TMPCOOKIE /tmp/login_res.txt
 else
   echo "Skipping admin login test (ADMIN_EMAIL/ADMIN_PASSWORD not provided)"
+fi
+
+if [ $EXIT_CODE -ne 0 ]; then
+  echo "One or more smoke tests failed"; exit $EXIT_CODE
+else
+  echo "All smoke tests passed"; exit 0
 fi
