@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>NBN TECH TEAM</title>
 	<link rel="stylesheet" href="style.css">
+	<link rel="preload" as="image" href="https://images.unsplash.com/photo-1521790367033-1b24042c0e20?w=1200&h=675&fit=crop&fm=webp" type="image/webp">
 	</head>
 <body>
 	<nav class="site-nav" role="navigation">
@@ -60,7 +61,11 @@
 	</script>
 
 	<div class="hero" data-animate style="position:relative;overflow:hidden;">
-		<img class="hero-bg" loading="lazy" src="https://images.unsplash.com/photo-1521790367033-1b24042c0e20?w=1600&h=900&fit=crop&q=80" alt="Professional workspace" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;">
+		<picture class="hero-picture" aria-hidden="true">
+			<source type="image/webp" srcset="https://images.unsplash.com/photo-1521790367033-1b24042c0e20?w=480&h=270&fit=crop&fm=webp 480w, https://images.unsplash.com/photo-1521790367033-1b24042c0e20?w=800&h=450&fit=crop&fm=webp 800w, https://images.unsplash.com/photo-1521790367033-1b24042c0e20?w=1200&h=675&fit=crop&fm=webp 1200w, https://images.unsplash.com/photo-1521790367033-1b24042c0e20?w=1600&h=900&fit=crop&fm=webp 1600w" sizes="(max-width:480px) 92vw, (max-width:900px) 100vw, 1200px">
+			<source srcset="https://images.unsplash.com/photo-1521790367033-1b24042c0e20?w=480&h=270&fit=crop 480w, https://images.unsplash.com/photo-1521790367033-1b24042c0e20?w=800&h=450&fit=crop 800w, https://images.unsplash.com/photo-1521790367033-1b24042c0e20?w=1200&h=675&fit=crop 1200w, https://images.unsplash.com/photo-1521790367033-1b24042c0e20?w=1600&h=900&fit=crop 1600w" sizes="(max-width:480px) 92vw, (max-width:900px) 100vw, 1200px">
+			<img class="hero-bg" loading="eager" src="https://images.unsplash.com/photo-1521790367033-1b24042c0e20?w=800&h=450&fit=crop&q=80" alt="Professional workspace" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;">
+		</picture>
 		<div class="hero-overlay" style="position:relative;z-index:2;text-align:center;">
 			<h1>Hello, We're <span>NBN TECH TEAM</span></h1>
 			<p>We build systems that never sleeps, Contact us to bring your ideas to reality.</p>

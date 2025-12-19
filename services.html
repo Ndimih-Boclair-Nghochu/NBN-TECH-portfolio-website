@@ -27,8 +27,12 @@
     </div>
   </nav>
 
-  <div class="page-hero" data-animate style="background-image: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1600&h=900&fit=crop');">
-    <img class="hero-bg" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1600&h=900&fit=crop" alt="Team members collaborating">
+  <div class="page-hero" data-animate>
+    <picture class="hero-picture" aria-hidden="true">
+      <source type="image/webp" srcset="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=480&h=270&fit=crop&fm=webp 480w, https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=450&fit=crop&fm=webp 800w, https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&h=675&fit=crop&fm=webp 1200w, https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1600&h=900&fit=crop&fm=webp 1600w" sizes="(max-width:480px) 92vw, (max-width:900px) 100vw, 1200px">
+      <source srcset="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=480&h=270&fit=crop 480w, https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=450&fit=crop 800w, https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&h=675&fit=crop 1200w, https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1600&h=900&fit=crop 1600w" sizes="(max-width:480px) 92vw, (max-width:900px) 100vw, 1200px">
+      <img class="hero-bg" loading="eager" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=450&fit=crop&q=80" alt="Team members collaborating">
+    </picture>
       <div class="hero-overlay">
       <h1>Services</h1>
       <p>Design, development and cloud services to bring your ideas to production.</p>

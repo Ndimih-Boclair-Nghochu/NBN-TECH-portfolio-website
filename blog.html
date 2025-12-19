@@ -21,7 +21,11 @@
   </nav>
 
   <section id="post-hero" class="post-hero" style="display:none">
-    <img id="hero-img" src="" alt="" class="hero-bg">
+    <picture id="hero-picture" class="hero-picture" aria-hidden="true">
+      <source id="hero-webp" type="image/webp" srcset="">
+      <source id="hero-jpg" srcset="">
+      <img id="hero-img" class="hero-bg" src="" alt="">
+    </picture>
     <div class="hero-overlay">
       <h1 id="hero-title"></h1>
       <p id="hero-date" class="meta"></p>
@@ -49,6 +53,15 @@
       if(!p){ container.innerHTML = '<p class="muted">Post not found.</p>'; return; }
       
       const imgUrl = p.image||'https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?w=1200&h=400&fit=crop';
+      // build responsive srcsets for the post hero
+      const webpSrcset = [480,800,1200].map(w => `${imgUrl.replace(/(\?.*)?$/, '')}?w=${w}&h=${Math.round(w*0.56)}&fit=crop&fm=webp`).map((u,i) => `${u} ${[480,800,1200][i]}w`).join(', ');
+      const jpgSrcset = [480,800,1200].map(w => `${imgUrl.replace(/(\?.*)?$/, '')}?w=${w}&h=${Math.round(w*0.56)}&fit=crop`).map((u,i) => `${u} ${[480,800,1200][i]}w`).join(', ');
+      const heroImg = document.getElementById('hero-img');
+      const heroWebp = document.getElementById('hero-webp');
+      const heroJpg = document.getElementById('hero-jpg');
+      if(heroWebp) heroWebp.srcset = webpSrcset;
+      if(heroJpg) heroJpg.srcset = jpgSrcset;
+      if(heroImg) heroImg.src = imgUrl.replace(/(\?.*)?$/, '') + '?w=800&h=450&fit=crop&q=80';
       const dateStr = new Date(p.createdAt).toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
       
       document.getElementById('hero-img').src = imgUrl;

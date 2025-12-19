@@ -1569,7 +1569,8 @@ img, video, iframe {
 	text-align:center;
 	background-size:cover;
 	background-position:center;
-	background-attachment:fixed;
+	/* avoid fixed backgrounds (poor on mobile) */
+	background-attachment:scroll;
 	min-height:50vh;
 	display:flex;
 	align-items:center;
@@ -1590,6 +1591,15 @@ img, video, iframe {
 	background:rgba(0,0,0,0.4);
 	z-index:1;
 	pointer-events:none;
+}
+
+/* Ensure picture-based hero images fill their container and are performant */
+.page-hero .hero-picture{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.page-hero .hero-picture img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* preload sentinel for home hero (overrides can be made per page) */
+@media (max-width:900px){
+	.page-hero{padding:56px 12px}
 }
 
 /* Remove overlay on portfolio page hero */
