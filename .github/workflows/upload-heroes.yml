@@ -1,0 +1,24 @@
+name: Upload hero images and invalidate CloudFront
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y awscli webp
+      - name: Upload hero images and invalidate
+        env:
+          BUCKET: ${{ secrets.S3_BUCKET }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          CLOUDFRONT_DIST: ${{ secrets.CLOUDFRONT_DIST }}
+        run: |
+          chmod +x ./scripts/upload_and_invalidate.sh
+          ./scripts/upload_and_invalidate.sh "$BUCKET"
