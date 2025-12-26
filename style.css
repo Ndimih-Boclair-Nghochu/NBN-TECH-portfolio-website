@@ -1615,6 +1615,37 @@ img, video, iframe {
 .page-hero .hero-picture{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
 .page-hero .hero-picture img{width:100%;height:100%;object-fit:cover;display:block}
 
+/* 3D / Desk-style visual helpers (subtle, performant) */
+.desk-3d{perspective:1200px;-webkit-perspective:1200px}
+.desk-3d .scene{transform-style:preserve-3d;transition:transform .5s cubic-bezier(.2,.9,.2,1);will-change:transform}
+.desk-3d .scene img{display:block;width:100%;height:auto;border-radius:12px;box-shadow:0 20px 40px rgba(10,20,40,0.3), inset 0 -6px 20px rgba(0,0,0,0.06);transform:translateZ(30px) rotateX(1.2deg)}
+.desk-3d:hover .scene{transform:rotateX(4deg) translateY(-6px);box-shadow:0 28px 60px rgba(10,20,40,0.35)}
+
+/* 3D effect for project/post images and hero (applies gracefully with responsive fallbacks) */
+.project img, .posts-grid .post img{border-radius:12px;transition:transform .45s ease, box-shadow .45s ease;will-change:transform}
+.project img:hover{transform:translateY(-8px) rotateX(5deg) scale(1.02);box-shadow:0 24px 48px rgba(10,20,40,0.28)}
+
+.page-hero .hero-picture{transform-origin:center;transition:transform .6s cubic-bezier(.2,.9,.2,1);will-change:transform,box-shadow;box-shadow:0 18px 34px rgba(0,0,0,0.24);border-radius:10px;overflow:hidden}
+.page-hero:hover .hero-picture{transform:translateY(-6px) rotateX(2deg) scale(1.005)}
+
+/* Tailwind-like utility helpers (small subset to keep CSS lightweight) */
+.u-flex{display:flex}
+.u-items-center{align-items:center}
+.u-justify-center{justify-content:center}
+.u-gap-4{gap:1rem}
+.u-grid{display:grid}
+.u-grid-cols-2{grid-template-columns:repeat(2,1fr)}
+@media (max-width:900px){.u-grid-cols-2{grid-template-columns:1fr}}
+.u-rounded-lg{border-radius:12px}
+.u-shadow-xl{box-shadow:0 20px 40px rgba(10,20,40,0.12)}
+.hover-rise{transition:transform .35s ease, box-shadow .35s ease}
+.hover-rise:hover{transform:translateY(-6px);box-shadow:0 22px 44px rgba(10,20,40,0.22)}
+
+/* Keep 3D effects off on small screens for performance and clarity */
+@media (max-width:900px){
+  .page-hero .hero-picture, .desk-3d .scene img, .project img{transform:none;box-shadow:none}
+}
+
 /* preload sentinel for home hero (overrides can be made per page) */
 @media (max-width:900px){
 	.page-hero{padding:56px 12px}

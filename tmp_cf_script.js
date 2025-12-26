@@ -248,7 +248,7 @@ async function fetchBlogs(limit){
 				? `<a href="${externalHref}" class="btn outline" target="_blank" rel="noopener">Open source</a>`
 				: `<a href="https://wa.me/?text=${encodeURIComponent(window.location.origin + '/' + 'blog.html?id=' + encodeURIComponent(p.id) + ' ' + (p.title || ''))}" class="btn outline" target="_blank" rel="noopener">Share</a>`;
 			return `
-					<article class="post blog-post" data-animate>
+			<article class="post blog-post">
 				<img src="${p.image||'https://images.unsplash.com/photo-1508921912186-1d1a45ebb3c1?w=800&h=400&fit=crop'}" alt="${p.title}">
 				<h2>${p.title}</h2>
 				<p class="meta">${new Date(p.createdAt).toLocaleDateString()} — ${p.excerpt||''}</p>
@@ -293,7 +293,7 @@ async function fetchProjects(limit){
 			console.log('Rendering all projects on portfolio page');
 			// For portfolio page: show all projects
 			target.innerHTML = items.map(p => `
-				<div class="project hover-rise u-rounded-lg u-shadow-xl" data-animate>
+				<div class="project">
 					<img src="${p.image||'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop'}" alt="${p.title}">
 					<h3>${p.title}</h3>
 					<p class="meta">${p.description||''}</p>
@@ -325,7 +325,7 @@ function renderProjectCarousel(container, items){
 			batch.push(items[(start + i) % items.length]);
 		}
 		container.innerHTML = batch.map(p => `
-				<div class="project hover-rise u-rounded-lg u-shadow-xl" data-animate>
+			<div class="project">
 				<img src="${p.image||'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop'}" alt="${p.title}">
 				<h3>${p.title}</h3>
 				<p class="meta">${p.description||''}</p>
@@ -372,9 +372,8 @@ async function fetchTeam(){
 		members.forEach((member, idx) => {
 			const card = document.createElement('div');
 			card.className = 'team-member';
-		card.setAttribute('data-animate','');
-		const linkedinLink = member.linkedin ? `<a href="${member.linkedin}" target="_blank" rel="noopener noreferrer" title="LinkedIn">` +
-				`<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 1 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.39v-1.2h-2.66v8.37h2.66v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.66M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>` : ''; 
+			const linkedinLink = member.linkedin ? `<a href="${member.linkedin}" target="_blank" rel="noopener noreferrer" title="LinkedIn">` +
+				`<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.39v-1.2h-2.66v8.37h2.66v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.66M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg></a>` : '';
 
 			const websiteLink = member.website ? `<a href="${member.website}" target="_blank" rel="noopener noreferrer" title="Personal Website">` +
 				`<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/></svg></a>` : '';
@@ -589,7 +588,7 @@ async function renderReviews(){
 		const rating = r.rating ? parseInt(r.rating,10) : 0;
 		const stars = new Array(5).fill(0).map((_,i)=> i<rating ? '<svg viewBox="0 0 24 24" fill="#ffb400" aria-hidden="true"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.402 8.168L12 18.896 3.664 23.165l1.402-8.168L-0.868 9.21l8.2-1.192z"/></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="#ffb400" aria-hidden="true"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.402 8.168L12 18.896 3.664 23.165l1.402-8.168L-0.868 9.21l8.2-1.192z"/></svg>').join('');
 		return `
-		<div class="review-card hover-rise" data-animate>
+		<div class="review-card">
 			<p class="quote">"${escapeHtml(r.text)}"</p>
 			<div class="meta-row">
 			  <p class="author">— ${escapeHtml(r.author)}${r.role?`, ${escapeHtml(r.role)}`:''}</p>
@@ -600,7 +599,6 @@ async function renderReviews(){
 
 	// start carousel after rendering
 	startReviewCarousel();
-	onScroll();
 }
 
 function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
